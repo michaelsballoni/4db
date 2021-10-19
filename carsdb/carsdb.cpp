@@ -4,5 +4,5 @@
 
 int main()
 {
-	seadb::ctxt context("cars.db");
+	seadb::ctxt context(u"cars.db");
 }

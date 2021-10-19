@@ -8,20 +8,22 @@
 namespace seadb
 {
     template <typename K, typename V>
+    struct kvpair
+    {
+        kvpair(const K& k, const V& v)
+            : key(k)
+            , value(v)
+        {}
+
+        K key;
+        V value;
+    };
+
+    template <typename K, typename V>
     class vectormap
     {
-        struct kvpair
-        {
-            kvpair(const K& k, const V& v)
-                : key(k)
-                , value(v)
-            {}
-
-            K key;
-            V value;
-        };
-
-        const std::vector<kvpair>& vec() const
+    public:
+        const std::vector<kvpair<K, V>>& vec() const
         {
             return m_vec;
         }
@@ -47,13 +49,13 @@ namespace seadb
                 vs.push_back(kvp.Value);
             return vs;
         }
-        */
 
         V get(const K& key) const
         {
             assert(contains(key));
             return m_map[key];
         }
+        */
 
         size_t size() const
         {
@@ -82,7 +84,7 @@ namespace seadb
         }
 
     private:
-        std::vector<kvpair> m_vec;
+        std::vector<kvpair<K, V>> m_vec;
         std::unordered_map<K, V> m_map;
     };
 }

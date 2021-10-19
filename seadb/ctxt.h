@@ -2,16 +2,15 @@
 
 #define _SILENCE_ALL_CXX20_DEPRECATION_WARNINGS
 
-#include "../sqlite_modern_cpp/hdr/sqlite_modern_cpp.h"
-
+#include "db.h"
 #include "types.h"
 
 #include <assert.h>
 
-#include <exception>
 #include <filesystem>
 #include <memory>
 #include <mutex>
+#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -20,13 +19,13 @@ namespace seadb
 	class ctxt
 	{
 	public:
-		ctxt(const std::string& dbFilePath)
+		ctxt(const std::u16string& dbFilePath)
 		{
             {
-                std::lock_guard<std::mutex> lock(GetDbBuildLock());
+                std::lock_guard<std::mutex> lock(getDbBuildLock());
                 if (!std::filesystem::exists(std::filesystem::path(dbFilePath.c_str())))
                 {
-                    sqlite::database db(dbFilePath.c_str());
+                    db db(dbFilePath.c_str());
                     {
                         /* FORNOW
                         RunSql(db, Tables.CreateSql);
@@ -35,11 +34,11 @@ namespace seadb
                         RunSql(db, Items.CreateSql);
                         */
                     }
-                    RunSql(db, { "PRAGMA journal_mode = WAL", "PRAGMA synchronous = NORMAL" });
+                    // FORNOW RunSql(db, { "PRAGMA journal_mode = WAL", "PRAGMA synchronous = NORMAL" });
                 }
             }
 
-            m_db = std::make_shared<sqlite::database>(dbFilePath.c_str());
+            m_db = std::make_shared<db>(dbFilePath.c_str());
         }
 
         ~ctxt()
@@ -48,10 +47,11 @@ namespace seadb
             assert(m_postItemOps.empty());
         }
 
-        void ProcessPostOps()
+        void processPostOps()
         {
             if (m_postItemOps.empty())
                 return;
+            /* FORNOW
             try
             {
                 *m_db << "begin";
@@ -65,9 +65,10 @@ namespace seadb
                 *m_db << "rollback";
                 throw;
             }
+            */
         }
 
-        void AddPostOp(const std::string& sql)
+        void addPostOp(const std::string& sql)
         {
             m_postItemOps.push_back(sql);
         }
@@ -76,19 +77,21 @@ namespace seadb
         std::vector<std::string> m_postItemOps;
 
 	private:
-		static void RunSql(sqlite::database& db, const std::vector<std::string>& queries)
+		static void runSql(db& db, const std::vector<std::string>& queries)
 		{
+            /* FORNOW
 			for (const auto& query : queries)
 				db << query;
+            */
 		}
 
-		static std::mutex& GetDbBuildLock()
+		static std::mutex& getDbBuildLock()
 		{
 			static std::mutex mutex;
 			return mutex;
 		}
 
 	private:
-		std::shared_ptr<sqlite::database> m_db;
+		std::shared_ptr<db> m_db;
 	};
 }

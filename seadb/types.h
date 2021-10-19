@@ -1,7 +1,8 @@
 #pragma once
 
-#include "vectormap.h"
+#include "db.h"
 #include "strnum.h"
+#include "vectormap.h"
 
 #include <exception>
 #include <string>
@@ -16,18 +17,6 @@ namespace seadb
 			: std::runtime_error(msg)
 		{}
 	};
-
-    class sqlerr : public seaerr
-    {
-    public:
-        sqlerr(const std::string& msg, const std::u16string& _sql)
-            : seaerr(msg)
-        {
-            sql = _sql;
-        }
-
-        std::u16string sql;
-    };
 
     struct define
     {

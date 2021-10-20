@@ -1,0 +1,68 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31702.278
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "carsdb", "carsdb\carsdb.vcxproj", "{D3E18627-396D-429B-9FA4-90D85846B87F}"
+EndProject
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "4db", ".", "{D4110988-E9F7-4B07-AF9E-6FA1A0DB6DB3}"
+	ProjectSection(WebsiteProperties) = preProject
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
+		Debug.AspNetCompiler.VirtualPath = "/localhost_49877"
+		Debug.AspNetCompiler.PhysicalPath = "..\seadb\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_49877\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/localhost_49877"
+		Release.AspNetCompiler.PhysicalPath = "..\seadb\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_49877\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "49877"
+		SlnRelativePath = "..\seadb\"
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D3E18627-396D-429B-9FA4-90D85846B87F}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{D3E18627-396D-429B-9FA4-90D85846B87F}.Debug|x64.ActiveCfg = Debug|x64
+		{D3E18627-396D-429B-9FA4-90D85846B87F}.Debug|x64.Build.0 = Debug|x64
+		{D3E18627-396D-429B-9FA4-90D85846B87F}.Debug|x86.ActiveCfg = Debug|Win32
+		{D3E18627-396D-429B-9FA4-90D85846B87F}.Debug|x86.Build.0 = Debug|Win32
+		{D3E18627-396D-429B-9FA4-90D85846B87F}.Release|Any CPU.ActiveCfg = Release|Win32
+		{D3E18627-396D-429B-9FA4-90D85846B87F}.Release|x64.ActiveCfg = Release|x64
+		{D3E18627-396D-429B-9FA4-90D85846B87F}.Release|x64.Build.0 = Release|x64
+		{D3E18627-396D-429B-9FA4-90D85846B87F}.Release|x86.ActiveCfg = Release|Win32
+		{D3E18627-396D-429B-9FA4-90D85846B87F}.Release|x86.Build.0 = Release|Win32
+		{D4110988-E9F7-4B07-AF9E-6FA1A0DB6DB3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D4110988-E9F7-4B07-AF9E-6FA1A0DB6DB3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D4110988-E9F7-4B07-AF9E-6FA1A0DB6DB3}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{D4110988-E9F7-4B07-AF9E-6FA1A0DB6DB3}.Debug|x64.Build.0 = Debug|Any CPU
+		{D4110988-E9F7-4B07-AF9E-6FA1A0DB6DB3}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D4110988-E9F7-4B07-AF9E-6FA1A0DB6DB3}.Debug|x86.Build.0 = Debug|Any CPU
+		{D4110988-E9F7-4B07-AF9E-6FA1A0DB6DB3}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{D4110988-E9F7-4B07-AF9E-6FA1A0DB6DB3}.Release|Any CPU.Build.0 = Debug|Any CPU
+		{D4110988-E9F7-4B07-AF9E-6FA1A0DB6DB3}.Release|x64.ActiveCfg = Debug|Any CPU
+		{D4110988-E9F7-4B07-AF9E-6FA1A0DB6DB3}.Release|x64.Build.0 = Debug|Any CPU
+		{D4110988-E9F7-4B07-AF9E-6FA1A0DB6DB3}.Release|x86.ActiveCfg = Debug|Any CPU
+		{D4110988-E9F7-4B07-AF9E-6FA1A0DB6DB3}.Release|x86.Build.0 = Debug|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {07C04C34-9583-45EA-A7C4-4F551747F198}
+	EndGlobalSection
+EndGlobal

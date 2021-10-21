@@ -147,7 +147,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\sqlite\sqlite3.c" />
+    <ClCompile Include="..\..\sqlite\sqlite3.c" />
     <ClCompile Include="carsdb.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

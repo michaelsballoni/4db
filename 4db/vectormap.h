@@ -5,7 +5,7 @@
 #include <unordered_map>
 #include <vector>
 
-namespace seadb
+namespace fourdb
 {
     template <typename K, typename V>
     struct kvpair
@@ -33,29 +33,11 @@ namespace seadb
             return m_map;
         }
 
-        /* FORNOW - Needed?
-        std::vector<K> keys() const
-        {
-            std::vector<K> ks(m_vec.size());
-            for (const auto& kvp : m_vec)
-                ks.push_back(kvp.Key);
-            return ks;
-        }
-
-        std::vector<V> values() const
-        {
-            std::vector<V> vs(m_vec.size());
-            for (const auto& kvp : m_vec)
-                vs.push_back(kvp.Value);
-            return vs;
-        }
-
         V get(const K& key) const
         {
             assert(contains(key));
             return m_map[key];
         }
-        */
 
         size_t size() const
         {
@@ -69,11 +51,12 @@ namespace seadb
 
         void insert(K key, V val)
         {
+            assert(!contains(key));
             m_map.insert(key, val);
             m_vec.emplace_back(key, val);
         }
 
-        bool tryget(const K& key, V& val) const
+        bool tryGet(const K& key, V& val) const
         {
             auto it = m_map.find(key);
             if (it == m_map.end())
@@ -84,7 +67,7 @@ namespace seadb
         }
 
     private:
-        std::vector<kvpair<K, V>> m_vec;
         std::unordered_map<K, V> m_map;
+        std::vector<kvpair<K, V>> m_vec;
     };
 }

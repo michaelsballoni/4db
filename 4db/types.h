@@ -8,16 +8,8 @@
 #include <string>
 #include <unordered_map>
 
-namespace seadb
+namespace fourdb
 {
-	class seaerr : public std::runtime_error
-	{
-	public:
-        seaerr(const std::string& msg)
-			: std::runtime_error(msg)
-		{}
-	};
-
     struct define
     {
         std::u16string table;
@@ -53,23 +45,23 @@ namespace seadb
 
         criteriaset(const criteria& _criteria)
         {
-            addcriteria(_criteria);
+            addCriteria(_criteria);
         }
 
-        static std::vector<criteriaset> genwhere(const criteria& criteria)
+        static std::vector<criteriaset> genWhere(const criteria& criteria)
         {
             return { criteriaset(criteria) };
         }
 
-        static std::vector<criteriaset> genwhere(const std::vector<criteria>& _criteria)
+        static std::vector<criteriaset> genWhere(const std::vector<criteria>& _criteria)
         {
             criteriaset set;
             for (const auto& c : _criteria)
-                set.addcriteria(c);
+                set.addCriteria(c);
             return { set };
         }
 
-        void addcriteria(criteria _criteria)
+        void addCriteria(criteria _criteria)
         {
             criterias.push_back(_criteria);
         }
@@ -78,12 +70,12 @@ namespace seadb
     struct order // ORDER BY
     {
         std::u16string field;
-        bool descending;
+        bool descending = false;
     };
 
     struct select
     {
-        std::vector<std::u16string> selectcols;
+        std::vector<std::u16string> selectCols;
         std::u16string from; // FROM
         std::vector<criteriaset> where;
         std::vector<order> orderby;
@@ -91,13 +83,13 @@ namespace seadb
 
         std::unordered_map<std::u16string, strnum> cmdparams;
 
-        select& addparam(const std::u16string& name, const strnum& value)
+        select& addParam(const std::u16string& name, const strnum& value)
         {
             cmdparams[name] = value;
             return *this;
         }
 
-        select& addorder(std::u16string name, bool descending)
+        select& addOrder(std::u16string name, bool descending)
         {
             order _order;
             _order.field = name;

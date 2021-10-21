@@ -1,8 +1,8 @@
-#include "../seadb/ctxt.h"
+#include "../4db/ctxt.h"
 
 #include <stdio.h>
 
 int main()
 {
-	seadb::ctxt context(u"cars.db");
+	fourdb::ctxt context(u"cars.db");
 }

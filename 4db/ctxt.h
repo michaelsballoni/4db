@@ -14,7 +14,7 @@
 #include <string>
 #include <vector>
 
-namespace seadb
+namespace fourdb
 {
 	class ctxt
 	{
@@ -26,15 +26,14 @@ namespace seadb
                 if (!std::filesystem::exists(std::filesystem::path(dbFilePath.c_str())))
                 {
                     db db(dbFilePath.c_str());
-                    {
-                        /* FORNOW
-                        RunSql(db, Tables.CreateSql);
-                        RunSql(db, Names.CreateSql);
-                        RunSql(db, Values.CreateSql);
-                        RunSql(db, Items.CreateSql);
-                        */
-                    }
-                    // FORNOW RunSql(db, { "PRAGMA journal_mode = WAL", "PRAGMA synchronous = NORMAL" });
+                    /* FORNOW
+                    runSql(db, Tables.CreateSql);
+                    runSql(db, Names.CreateSql);
+                    runSql(db, Values.CreateSql);
+                    runSql(db, Items.CreateSql);
+                    */
+                    db.execSql(u"PRAGMA journal_mode = WAL");
+                    db.execSql(u"PRAGMA synchronous = NORMAL");
                 }
             }
 
@@ -51,38 +50,34 @@ namespace seadb
         {
             if (m_postItemOps.empty())
                 return;
-            /* FORNOW
             try
             {
-                *m_db << "begin";
-                RunSql(*m_db, m_postItemOps);
-                *m_db << "commit";
+                m_db->execSql(u"begin");
+                runSql(*m_db, m_postItemOps);
+                m_db->execSql(u"commit");
                 m_postItemOps.clear();
             }
             catch (const std::exception&)
             {
                 m_postItemOps.clear();
-                *m_db << "rollback";
+                m_db->execSql(u"rollback");
                 throw;
             }
-            */
         }
 
-        void addPostOp(const std::string& sql)
+        void addPostOp(const std::u16string& sql)
         {
             m_postItemOps.push_back(sql);
         }
 
     private:
-        std::vector<std::string> m_postItemOps;
+        std::vector<std::u16string> m_postItemOps;
 
 	private:
-		static void runSql(db& db, const std::vector<std::string>& queries)
+		static void runSql(db& db, const std::vector<std::u16string>& queries)
 		{
-            /* FORNOW
-			for (const auto& query : queries)
-				db << query;
-            */
+            for (const auto& query : queries)
+                db.execSql(query);
 		}
 
 		static std::mutex& getDbBuildLock()

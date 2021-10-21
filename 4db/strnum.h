@@ -1,9 +1,12 @@
 #pragma once
 
+#include "utils.h"
+
 #include <assert.h>
+
 #include <string>
 
-namespace seadb
+namespace fourdb
 {
     class strnum
     {
@@ -41,6 +44,22 @@ namespace seadb
         bool isStr() const
         {
             return m_isStr;
+        }
+
+        std::u16string toSqlLiteral() const
+        {
+            if (m_isStr)
+            {
+                std::u16string retVal = m_str; // replace modifies param in place
+                replaceFromTo<std::u16string>(retVal, u"\'", u"\'\'");
+                retVal = u"'" + retVal + u"'";
+                return retVal;
+            }
+            else
+            {
+                auto str = std::to_string(m_num);
+                return std::u16string(str.begin(), str.end());
+            }
         }
 
     private:

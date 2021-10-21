@@ -9,21 +9,21 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "4db", ".", "{D4110988-E9F7-
 	ProjectSection(WebsiteProperties) = preProject
 		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
 		Debug.AspNetCompiler.VirtualPath = "/localhost_49877"
-		Debug.AspNetCompiler.PhysicalPath = "..\seadb\"
+		Debug.AspNetCompiler.PhysicalPath = "..\4db\"
 		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_49877\"
 		Debug.AspNetCompiler.Updateable = "true"
 		Debug.AspNetCompiler.ForceOverwrite = "true"
 		Debug.AspNetCompiler.FixedNames = "false"
 		Debug.AspNetCompiler.Debug = "True"
 		Release.AspNetCompiler.VirtualPath = "/localhost_49877"
-		Release.AspNetCompiler.PhysicalPath = "..\seadb\"
+		Release.AspNetCompiler.PhysicalPath = "..\4db\"
 		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_49877\"
 		Release.AspNetCompiler.Updateable = "true"
 		Release.AspNetCompiler.ForceOverwrite = "true"
 		Release.AspNetCompiler.FixedNames = "false"
 		Release.AspNetCompiler.Debug = "False"
 		VWDPort = "49877"
-		SlnRelativePath = "..\seadb\"
+		SlnRelativePath = "..\4db\"
 	EndProjectSection
 EndProject
 Global
@@ -37,11 +37,13 @@ Global
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{D3E18627-396D-429B-9FA4-90D85846B87F}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{D3E18627-396D-429B-9FA4-90D85846B87F}.Debug|Any CPU.Build.0 = Debug|Win32
 		{D3E18627-396D-429B-9FA4-90D85846B87F}.Debug|x64.ActiveCfg = Debug|x64
 		{D3E18627-396D-429B-9FA4-90D85846B87F}.Debug|x64.Build.0 = Debug|x64
 		{D3E18627-396D-429B-9FA4-90D85846B87F}.Debug|x86.ActiveCfg = Debug|Win32
 		{D3E18627-396D-429B-9FA4-90D85846B87F}.Debug|x86.Build.0 = Debug|Win32
 		{D3E18627-396D-429B-9FA4-90D85846B87F}.Release|Any CPU.ActiveCfg = Release|Win32
+		{D3E18627-396D-429B-9FA4-90D85846B87F}.Release|Any CPU.Build.0 = Release|Win32
 		{D3E18627-396D-429B-9FA4-90D85846B87F}.Release|x64.ActiveCfg = Release|x64
 		{D3E18627-396D-429B-9FA4-90D85846B87F}.Release|x64.Build.0 = Release|x64
 		{D3E18627-396D-429B-9FA4-90D85846B87F}.Release|x86.ActiveCfg = Release|Win32

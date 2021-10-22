@@ -19,7 +19,7 @@ namespace fourdb
 	class ctxt
 	{
 	public:
-		ctxt(const std::u16string& dbFilePath)
+		ctxt(const std::string& dbFilePath)
 		{
             {
                 std::lock_guard<std::mutex> lock(getDbBuildLock());
@@ -32,8 +32,8 @@ namespace fourdb
                     runSql(db, Values.CreateSql);
                     runSql(db, Items.CreateSql);
                     */
-                    db.execSql(u"PRAGMA journal_mode = WAL");
-                    db.execSql(u"PRAGMA synchronous = NORMAL");
+                    db.execSql("PRAGMA journal_mode = WAL");
+                    db.execSql("PRAGMA synchronous = NORMAL");
                 }
             }
 
@@ -52,29 +52,34 @@ namespace fourdb
                 return;
             try
             {
-                m_db->execSql(u"begin");
+                m_db->execSql("BEGIN");
                 runSql(*m_db, m_postItemOps);
-                m_db->execSql(u"commit");
+                m_db->execSql("COMMIT");
                 m_postItemOps.clear();
             }
             catch (const std::exception&)
             {
                 m_postItemOps.clear();
-                m_db->execSql(u"rollback");
+                m_db->execSql("ROLLBACK");
                 throw;
             }
         }
 
-        void addPostOp(const std::u16string& sql)
+        void addPostOp(const std::wstring& sql)
         {
             m_postItemOps.push_back(sql);
         }
 
+        db& getdb()
+        {
+            return *m_db;
+        }
+
     private:
-        std::vector<std::u16string> m_postItemOps;
+        std::vector<std::wstring> m_postItemOps;
 
 	private:
-		static void runSql(db& db, const std::vector<std::u16string>& queries)
+		static void runSql(db& db, const std::vector<std::wstring>& queries)
 		{
             for (const auto& query : queries)
                 db.execSql(query);

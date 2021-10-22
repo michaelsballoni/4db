@@ -52,4 +52,14 @@ namespace fourdb
             offset = pos + increment;
         }
     }
+
+    std::wstring toWideStr(const std::string& str)
+    {
+        return std::wstring(str.begin(), str.end());
+    }
+
+    std::wstring toWideStr(const std::u16string& str)
+    {
+        return std::wstring(str.begin(), str.end());
+    }
 }

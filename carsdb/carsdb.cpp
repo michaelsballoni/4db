@@ -4,5 +4,5 @@
 
 int main()
 {
-	fourdb::ctxt context(u"cars.db");
+	fourdb::ctxt context("cars.db");
 }

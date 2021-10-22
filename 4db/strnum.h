@@ -17,7 +17,7 @@ namespace fourdb
             , m_num(0.0)
         {}
 
-        strnum(const std::u16string& str)
+        strnum(const std::wstring& str)
             : m_isStr(true)
             , m_str(str)
             , m_num(0.0)
@@ -29,7 +29,7 @@ namespace fourdb
             , m_num(num)
         {}
 
-        const std::u16string& str() const
+        const std::wstring& str() const
         {
             assert(m_isStr);
             return m_str;
@@ -46,25 +46,24 @@ namespace fourdb
             return m_isStr;
         }
 
-        std::u16string toSqlLiteral() const
+        std::wstring toSqlLiteral() const
         {
             if (m_isStr)
             {
-                std::u16string retVal = m_str; // replace modifies param in place
-                replaceFromTo<std::u16string>(retVal, u"\'", u"\'\'");
-                retVal = u"'" + retVal + u"'";
+                std::wstring retVal = m_str; // replace modifies param in place
+                replaceFromTo<std::wstring>(retVal, L"\'", L"\'\'");
+                retVal = L"'" + retVal + L"'";
                 return retVal;
             }
             else
             {
-                auto str = std::to_string(m_num);
-                return std::u16string(str.begin(), str.end());
+                return std::to_wstring(m_num);
             }
         }
 
     private:
         bool m_isStr;
-        std::u16string m_str;
+        std::wstring m_str;
         double m_num;
     };
 }

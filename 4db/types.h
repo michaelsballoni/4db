@@ -12,16 +12,16 @@ namespace fourdb
 {
     struct define
     {
-        std::u16string table;
+        std::wstring table;
         strnum key;
-        std::unordered_map<std::u16string, strnum> metadata;
+        std::unordered_map<std::wstring, strnum> metadata;
 
-        define(const std::u16string& _table, const strnum& _key)
+        define(const std::wstring& _table, const strnum& _key)
             : table(_table)
             , key(_key)
         {}
 
-        define& set(const std::u16string& name, const strnum& value)
+        define& set(const std::wstring& name, const strnum& value)
         {
             metadata[name] = value;
             return *this;
@@ -30,9 +30,9 @@ namespace fourdb
 
     struct criteria // WHERE
     {
-        std::u16string name;
-        std::u16string op;
-        std::u16string paramName;
+        std::wstring name;
+        std::wstring op;
+        std::wstring paramName;
     };
 
     enum class criteriaop { AND, OR };
@@ -69,27 +69,27 @@ namespace fourdb
 
     struct order // ORDER BY
     {
-        std::u16string field;
+        std::wstring field;
         bool descending = false;
     };
 
     struct select
     {
-        std::vector<std::u16string> selectCols;
-        std::u16string from; // FROM
+        std::vector<std::wstring> selectCols;
+        std::wstring from; // FROM
         std::vector<criteriaset> where;
         std::vector<order> orderby;
         int limit;
 
-        std::unordered_map<std::u16string, strnum> cmdparams;
+        std::unordered_map<std::wstring, strnum> cmdparams;
 
-        select& addParam(const std::u16string& name, const strnum& value)
+        select& addParam(const std::wstring& name, const strnum& value)
         {
             cmdparams[name] = value;
             return *this;
         }
 
-        select& addOrder(std::u16string name, bool descending)
+        select& addOrder(std::wstring name, bool descending)
         {
             order _order;
             _order.field = name;
@@ -102,6 +102,6 @@ namespace fourdb
     struct schemaresponse
     {
         // table name => column names, kept in order
-        vectormap<std::u16string, std::vector<std::u16string>> tables;
+        vectormap<std::wstring, std::vector<std::wstring>> tables;
     };
 }

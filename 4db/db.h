@@ -14,13 +14,15 @@
 
 namespace fourdb
 {
+    typedef vectormap<std::string, strnum> paramap;
+
     class db
 	{
 	public:
-        db(const std::u16string& filePath)
+        db(const std::string& filePath)
             : m_db(nullptr)
         {
-            int rc = sqlite3_open16(filePath.c_str(), &m_db);
+            int rc = sqlite3_open(filePath.c_str(), &m_db);
             if (rc != SQLITE_OK)
                 throw seadberr(rc, m_db);
         }
@@ -34,14 +36,19 @@ namespace fourdb
             }
         }
 
-        std::shared_ptr<dbreader> execReader(const std::u16string& sql, const vectormap<std::u16string, strnum>& params = vectormap<std::u16string, strnum>())
+        std::shared_ptr<dbreader> execReader(const std::wstring& sql, const paramap& params = paramap())
         {
-            std::u16string fullSql = applyParams(sql, params);
+            std::wstring fullSql = applyParams(sql, params);
             auto reader = std::make_shared<dbreader>(m_db, fullSql);
             return reader;
         }
 
-        void execSql(const std::u16string& sql, const vectormap<std::u16string, strnum>& params = vectormap<std::u16string, strnum>())
+        void execSql(const std::string& sql, const paramap& params = paramap())
+        {
+            execSql(toWideStr(sql), params);
+        }
+
+        void execSql(const std::wstring& sql, const paramap& params = paramap())
         {
             auto reader = execReader(sql, params);
             while (reader->read())
@@ -49,7 +56,16 @@ namespace fourdb
             }
         }
 
-        std::optional<int64_t> execScalarInt64(const std::u16string& sql, const vectormap<std::u16string, strnum>& params = vectormap<std::u16string, strnum>())
+        std::optional<int64_t> execScalarInt32(const std::wstring& sql, const paramap& params = paramap())
+        {
+            auto reader = execReader(sql, params);
+            if (reader->read())
+                return reader->getInt32(0);
+            else
+                return std::nullopt;
+        }
+
+        std::optional<int64_t> execScalarInt64(const std::wstring& sql, const paramap& params = paramap())
         {
             auto reader = execReader(sql, params);
             if (reader->read())
@@ -58,7 +74,7 @@ namespace fourdb
                 return std::nullopt;
         }
 
-        std::optional<std::u16string> execScalarString(const std::u16string& sql, const vectormap<std::u16string, strnum>& params = vectormap<std::u16string, strnum>())
+        std::optional<std::wstring> execScalarString(const std::wstring& sql, const paramap& params = paramap())
         {
             auto reader = execReader(sql, params);
             if (reader->read())
@@ -67,23 +83,29 @@ namespace fourdb
                 return std::nullopt;
         }
 
-        int64_t execInsert(const std::u16string& sql, const vectormap<std::u16string, strnum>& params = vectormap<std::u16string, strnum>())
+        int64_t execInsert(const std::wstring& sql, const paramap& params = paramap())
         {
             return execScalarInt64(sql, params).value();
         }
 
-        int64_t execWithCount(const std::u16string& sql, const vectormap<std::u16string, strnum>& params = vectormap<std::u16string, strnum>())
+        int64_t execWithCount(const std::wstring& sql, const paramap& params = paramap())
         {
             execSql(sql, params);
-            return execScalarInt64(u"SELECT changes()").value();
+            return execScalarInt64(L"SELECT changes()").value();
         }
 
-        static std::u16string applyParams(const std::u16string& sql, const vectormap<std::u16string, strnum>& params)
+        int64_t execWithCount(const std::string& sql, const paramap& params = paramap())
         {
-            std::u16string retVal = sql;
+            return execWithCount(toWideStr(sql), params);
+        }
+
+        static std::wstring applyParams(const std::wstring& sql, const paramap& params)
+        {
+            std::wstring retVal = sql;
             for (const auto& it : params.map())
             {
-                retVal.replace(retVal.find(it.first), it.first.length(), it.second.toSqlLiteral());
+                auto paramWstr = toWideStr(it.first);
+                retVal.replace(retVal.find(paramWstr), paramWstr.length(), it.second.toSqlLiteral());
             }
             return retVal;
         }

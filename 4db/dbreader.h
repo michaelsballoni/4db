@@ -9,11 +9,12 @@ namespace fourdb
     class dbreader
     {
     public:
-        dbreader(sqlite3* db, const std::u16string& sql)
+        dbreader(sqlite3* db, const std::wstring& sql)
             : m_db(db)
             , m_stmt(nullptr)
             , m_doneReading(false)
         {
+// FORNOW - Deal with wstring != u16string on non-Windows
             int rc = sqlite3_prepare16_v3(m_db, sql.c_str(), sql.size() * 4, 0, &m_stmt, nullptr);
             if (rc != SQLITE_OK)
                 throw seadberr(rc, db);
@@ -43,9 +44,9 @@ namespace fourdb
                 throw seadberr(rc, m_db);
         }
 
-        std::u16string getString(unsigned idx)
+        std::wstring getString(unsigned idx)
         {
-            return (char16_t*)sqlite3_column_text16(m_stmt, idx);
+            return toWideStr((char16_t*)sqlite3_column_text16(m_stmt, idx));
         }
 
         double getDouble(unsigned idx)
@@ -56,6 +57,16 @@ namespace fourdb
         int64_t getInt64(unsigned idx)
         {
             return sqlite3_column_int64(m_stmt, idx);
+        }
+
+        int getInt32(unsigned idx)
+        {
+            return sqlite3_column_int(m_stmt, idx);
+        }
+
+        bool getBoolean(unsigned idx)
+        {
+            return getInt32(idx) != 0;
         }
 
     private:

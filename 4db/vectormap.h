@@ -32,8 +32,9 @@ namespace fourdb
 
         V get(const K& key) const
         {
-            assert(contains(key));
-            return m_map[key];
+            if (!contains(key))
+                throw std::runtime_error("key not found");
+            return m_map.find(key)->second;
         }
 
         size_t size() const
@@ -59,7 +60,7 @@ namespace fourdb
             if (it == m_map.end())
                 return false;
 
-            val = it.second;
+            val = it->second;
             return true;
         }
 

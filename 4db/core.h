@@ -37,7 +37,7 @@ namespace fourdb
 
     // https://stackoverflow.com/questions/5878775/how-to-find-and-replace-string
     template <typename T>
-    inline void replaceFromTo(T& str, const T& from, const T& to)
+    inline void replace(T& str, const T& from, const T& to)
     {
         size_t pos;
         size_t offset = 0;

@@ -1,16 +1,12 @@
 #pragma once
 
-#include "utils.h"
+#include "includes.h"
+
+#include "core.h"
 #include "strnum.h"
 #include "vectormap.h"
 
 #include "dbreader.h"
-
-#include <assert.h>
-
-#include <memory>
-#include <optional>
-#include <string>
 
 namespace fourdb
 {

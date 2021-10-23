@@ -2,12 +2,6 @@
 
 #include "ctxt.h"
 
-#include <array>
-#include <mutex>
-#include <optional>
-#include <string>
-#include <unordered_map>
-
 namespace fourdb
 {
     struct table_obj
@@ -15,7 +9,7 @@ namespace fourdb
         int id = -1;
         std::wstring name;
         bool isNumeric = false;
-    }
+    };
 
     /// <summary>
     /// metastrings implementation class for the tables in the virtual schema
@@ -23,23 +17,28 @@ namespace fourdb
     class tables
     {
     public:
-        std::array<std::string> createSql =
+        static const char** createSql()
         {
-            "CREATE TABLE tables\n(\n"
-            "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE,\n"
-            "name TEXT NOT NULL UNIQUE,\n"
-            "isNumeric BOOLEAN NOT NULL\n"
-            ")"
-        };
+            static const char* sql[] =
+            {
+                "CREATE TABLE tables\n(\n"
+                "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE,\n"
+                "name TEXT NOT NULL UNIQUE,\n"
+                "isNumeric BOOLEAN NOT NULL\n"
+                ")",
+                nullptr
+            };
+            return sql;
+        }
 
         /// <summary>
         /// Remove all tables from the database
         /// </summary>
         /// <param name="ctxt">Database connection</param>
-        public static void reset(ctxt& context)
+        static void reset(ctxt& context)
         {
             clearCaches();
-            ctxt.getdb().execSql("DELETE FROM tables");
+            context.getdb().execSql("DELETE FROM tables");
         }
 
         /// <summary>
@@ -55,11 +54,9 @@ namespace fourdb
         {
             std::lock_guard<std::mutex> lock(getmutx());
 
-            {
-                auto it = getcache().find(idname;
-                if (it != getcache().end())
-                    return it.second;
-            }
+            auto it = getcache().find(name);
+            if (it != getcache().end())
+                return it->second;
 
             paramap cmdParams;
             cmdParams.insert("@name", name);
@@ -77,12 +74,12 @@ namespace fourdb
                 if (noException)
                     return -1;
 
-                throw seaerr("tables.getid cannot create new table: " + name);
+                throw seaerr("tables.getid cannot create new table: " + toNarrowStr(name));
             }
 
-            cmdParams.Add("@isNumeric", isNumeric);
+            cmdParams.insert("@isNumeric", isNumeric);
             std::wstring insertSql = L"INSERT INTO tables (name, isNumeric) VALUES (@name, @isNumeric) RETURNS ID";
-            id = (int)ctxt.getdb().ExecuteInsertAsync(insertSql, cmdParams);
+            id = static_cast<int>(context.getdb().execInsert(insertSql, cmdParams));
             getcache()[name] = id;
             return id;
         }
@@ -93,29 +90,26 @@ namespace fourdb
         /// <param name="ctxt">Database connection</param>
         /// <param name="id">Table database row ID</param>
         /// <returns></returns>
-        static tableObj getTable(ctxt context, int id)
+        static std::optional<table_obj> getTable(ctxt context, int id)
         {
             std::lock_guard<std::mutex> lock(getmutx());
 
             if (id < 0)
-                return null;
+                return std::nullopt;
 
-            {
-                std::lock_guard<std::mutex> lock(getmutx());
-                auto it = getcacheback().find(id);
-                if (it != getcacheback().end())
-                    return it.second;
-            }
+            auto it = getcacheback().find(id);
+            if (it != getcacheback().end())
+                return it->second;
 
             std::wstring sql = L"SELECT name, isNumeric FROM tables WHERE id = " + std::to_wstring(id);
-            dbreader reader = context.getdb().execReader(sql);
-            if (!reader.read())
+            auto reader = context.getdb().execReader(sql);
+            if (!reader->read())
                 throw seaerr("tables.getTable fails to find record: " + std::to_string(id));
 
             table_obj obj;
             obj.id = id;
-            obj.name = reader.getString(0);
-            obj.isNumeric = reader.getBoolean(1);
+            obj.name = reader->getString(0);
+            obj.isNumeric = reader->getBoolean(1);
             getcacheback()[id] = obj;
             return obj;
         }
@@ -145,5 +139,5 @@ namespace fourdb
             static std::unordered_map<int, table_obj> cacheBack;
             return cacheBack;
         }
-    }
+    };
 }

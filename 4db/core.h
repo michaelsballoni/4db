@@ -1,9 +1,6 @@
 #pragma once
 
-#include "../../sqlite/sqlite3.h"
-
-#include <stdexcept>
-#include <string>
+#include "includes.h"
 
 namespace fourdb
 {
@@ -53,13 +50,39 @@ namespace fourdb
         }
     }
 
-    std::wstring toWideStr(const std::string& str)
+    inline std::string toNarrowStr(const std::wstring& str)
+    {
+        const wchar_t* from = str.c_str();
+        std::size_t len = str.size();
+        std::vector<char> buffer(len + 1);
+        std::use_facet<std::ctype<wchar_t> >(std::locale("")).narrow(from, from + len, '_', buffer.data());
+        return std::string(buffer.data(), &buffer[len]);
+    }
+
+    inline std::wstring toWideStr(const std::string& str)
     {
         return std::wstring(str.begin(), str.end());
     }
 
-    std::wstring toWideStr(const std::u16string& str)
+    inline std::wstring toWideStr(const std::u16string& str)
     {
         return std::wstring(str.begin(), str.end());
+    }
+
+    inline bool isWord(const std::wstring& str)
+    {
+        if (str.empty())
+            return false;
+
+        if (!std::isalpha(str[0]))
+            return false;
+
+        for (auto c : str)
+        {
+            if (!std::isalnum(c) && c != '_' && c != '-')
+                return false;
+        }
+   
+        return true;
     }
 }

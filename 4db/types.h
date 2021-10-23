@@ -1,12 +1,10 @@
 #pragma once
 
+#include "includes.h"
+
 #include "db.h"
 #include "strnum.h"
 #include "vectormap.h"
-
-#include <exception>
-#include <string>
-#include <unordered_map>
 
 namespace fourdb
 {

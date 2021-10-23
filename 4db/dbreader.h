@@ -1,8 +1,6 @@
 #pragma once
 
-#include "utils.h"
-
-#include <string>
+#include "core.h"
 
 namespace fourdb
 {

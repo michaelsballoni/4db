@@ -1,9 +1,6 @@
 #pragma once
 
-#include <assert.h>
-
-#include <unordered_map>
-#include <vector>
+#include "includes.h"
 
 namespace fourdb
 {
@@ -49,10 +46,10 @@ namespace fourdb
             return m_map.find(key) != m_map.end();
         }
 
-        void insert(K key, V val)
+        void insert(const K& key, const V& val)
         {
             assert(!contains(key));
-            m_map.insert(key, val);
+            m_map.insert({ key, val });
             m_vec.emplace_back(key, val);
         }
 

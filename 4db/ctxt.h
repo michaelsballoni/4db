@@ -1,18 +1,9 @@
 ﻿#pragma once
 
-#define _SILENCE_ALL_CXX20_DEPRECATION_WARNINGS
+#include "includes.h"
 
 #include "db.h"
 #include "types.h"
-
-#include <assert.h>
-
-#include <filesystem>
-#include <memory>
-#include <mutex>
-#include <stdexcept>
-#include <string>
-#include <vector>
 
 namespace fourdb
 {

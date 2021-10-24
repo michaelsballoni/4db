@@ -12,20 +12,20 @@ namespace fourdb
     };
 
     /// <summary>
-    /// metastrings implementation class for the tables in the virtual schema
+    /// implementation class for the tables in the virtual schema
     /// </summary>
     class tables
     {
     public:
-        static const char** createSql()
+        static const wchar_t** createSql()
         {
-            static const char* sql[] =
+            static const wchar_t* sql[] =
             {
-                "CREATE TABLE tables\n(\n"
-                "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE,\n"
-                "name TEXT NOT NULL UNIQUE,\n"
-                "isNumeric BOOLEAN NOT NULL\n"
-                ")",
+                L"CREATE TABLE tables\n(\n"
+                L"id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE,\n"
+                L"name TEXT NOT NULL UNIQUE,\n"
+                L"isNumeric BOOLEAN NOT NULL\n"
+                L")",
                 nullptr
             };
             return sql;
@@ -34,11 +34,11 @@ namespace fourdb
         /// <summary>
         /// Remove all tables from the database
         /// </summary>
-        /// <param name="ctxt">Database connection</param>
+        /// <param name="db">Database connection</param>
         static void reset(db& db)
         {
             clearCaches();
-            db.execSql("DELETE FROM tables");
+            db.execSql(L"DELETE FROM tables");
         }
 
         /// <summary>
@@ -52,10 +52,10 @@ namespace fourdb
         /// <returns>Database row ID for the table</returns>
         static int getId(db& db, std::wstring name, bool isNumeric = false, bool noCreate = false, bool noException = false)
         {
-            std::lock_guard<std::mutex> lock(getmutx());
+            std::lock_guard<std::mutex> lock(getMutex());
 
-            auto it = getcache().find(name);
-            if (it != getcache().end())
+            auto it = getCache().find(name);
+            if (it != getCache().end())
                 return it->second;
 
             paramap cmdParams;
@@ -65,7 +65,7 @@ namespace fourdb
             int id = idObj.value_or(-1);
             if (id >= 0)
             {
-                getcache()[name] = id;
+                getCache()[name] = id;
                 return id;
             }
 
@@ -74,13 +74,13 @@ namespace fourdb
                 if (noException)
                     return -1;
 
-                throw seaerr("tables.getid cannot create new table: " + toNarrowStr(name));
+                throw fourdberr("tables.getid cannot create new table: " + toNarrowStr(name));
             }
 
             cmdParams.insert("@isNumeric", isNumeric);
             std::wstring insertSql = L"INSERT INTO tables (name, isNumeric) VALUES (@name, @isNumeric)";
             id = static_cast<int>(db.execInsert(insertSql, cmdParams));
-            getcache()[name] = id;
+            getCache()[name] = id;
             return id;
         }
 
@@ -92,49 +92,49 @@ namespace fourdb
         /// <returns></returns>
         static std::optional<table_obj> getTable(db& db, int id)
         {
-            std::lock_guard<std::mutex> lock(getmutx());
+            std::lock_guard<std::mutex> lock(getMutex());
 
             if (id < 0)
                 return std::nullopt;
 
-            auto it = getcacheback().find(id);
-            if (it != getcacheback().end())
+            auto it = getCacheBack().find(id);
+            if (it != getCacheBack().end())
                 return it->second;
 
             std::wstring sql = L"SELECT name, isNumeric FROM tables WHERE id = " + std::to_wstring(id);
             auto reader = db.execReader(sql);
             if (!reader->read())
-                throw seaerr("tables.getTable fails to find record: " + std::to_string(id));
+                throw fourdberr("tables.getTable fails to find record: " + std::to_string(id));
 
             table_obj obj;
             obj.id = id;
             obj.name = reader->getString(0);
             obj.isNumeric = reader->getBoolean(1);
-            getcacheback()[id] = obj;
+            getCacheBack()[id] = obj;
             return obj;
         }
 
         static void clearCaches()
         {
-            std::lock_guard<std::mutex> lock(getmutx());
-            getcache().clear();
-            getcacheback().clear();
+            std::lock_guard<std::mutex> lock(getMutex());
+            getCache().clear();
+            getCacheBack().clear();
         }
 
     private:
-        static std::mutex& getmutx()
+        static std::mutex& getMutex()
         {
             static std::mutex mtx;
             return mtx;
         }
 
-        static std::unordered_map<std::wstring, int>& getcache()
+        static std::unordered_map<std::wstring, int>& getCache()
         {
             static std::unordered_map<std::wstring, int> cache;
             return cache;
         }
 
-        static std::unordered_map<int, table_obj>& getcacheback()
+        static std::unordered_map<int, table_obj>& getCacheBack()
         {
             static std::unordered_map<int, table_obj> cacheBack;
             return cacheBack;

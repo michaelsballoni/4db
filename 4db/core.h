@@ -4,19 +4,15 @@
 
 namespace fourdb
 {
-    class seaerr : public std::runtime_error
+    class fourdberr : public std::runtime_error
     {
     public:
-        seaerr(const std::string& msg)
+        fourdberr(const std::string& msg)
             : std::runtime_error(msg)
         {}
-    };
 
-    class seadberr : public seaerr
-    {
-    public:
-        seadberr(int rc, sqlite3* db)
-            : seaerr(getExceptionMsg(rc, db))
+        fourdberr(int rc, sqlite3* db)
+            : std::runtime_error(getExceptionMsg(rc, db))
         {}
 
     private:

@@ -21,17 +21,21 @@ namespace fourdb
 
 				tables::reset(context.getdb());
 
-				int id = tables::getId(context.getdb(), L"test-table", true);
-				Assert::IsTrue(id >= 0);
+				for (int run = 1; run <= 3; ++run)
+				{
+					bool isNumeric = true;
+					int id = tables::getId(context.getdb(), L"test-table", isNumeric);
+					Assert::IsTrue(id >= 0);
 
-				auto table = tables::getTable(context.getdb(), id);
-				Assert::IsTrue(table.has_value());
-				Assert::AreEqual(id, table->id);
-				Assert::AreEqual(true, table->isNumeric);
-				Assert::AreEqual(toWideStr("test-table"), table->name);
+					auto table = tables::getTable(context.getdb(), id);
+					Assert::IsTrue(table.has_value());
+					Assert::AreEqual(id, table->id);
+					Assert::AreEqual(isNumeric, table->isNumeric);
+					Assert::AreEqual(toWideStr("test-table"), table->name);
 
-				int id2 = tables::getId(context.getdb(), L"test-table");
-				Assert::AreEqual(id, id2);
+					int id2 = tables::getId(context.getdb(), L"test-table");
+					Assert::AreEqual(id, id2);
+				}
 			}
 			catch (const std::runtime_error& exp)
 			{

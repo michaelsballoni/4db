@@ -20,7 +20,7 @@ namespace fourdb
         {
             int rc = sqlite3_open(filePath.c_str(), &m_db);
             if (rc != SQLITE_OK)
-                throw seadberr(rc, m_db);
+                throw fourdberr(rc, m_db);
         }
 
         ~db()
@@ -37,11 +37,6 @@ namespace fourdb
             std::wstring fullSql = applyParams(sql, params);
             auto reader = std::make_shared<dbreader>(m_db, fullSql);
             return reader;
-        }
-
-        int execSql(const std::string& sql, const paramap& params = paramap())
-        {
-            return execSql(toWideStr(sql), params);
         }
 
         int execSql(const std::wstring& sql, const paramap& params = paramap())

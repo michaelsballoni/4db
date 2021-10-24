@@ -20,7 +20,7 @@ namespace fourdb
 				db my_db(testDbFilePath);
 
 				{
-					int affected = my_db.execSql("CREATE TABLE foo (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, bar INTEGER NOT NULL, blet TEXT NOT NULL)");
+					int affected = my_db.execSql(L"CREATE TABLE foo (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, bar INTEGER NOT NULL, blet TEXT NOT NULL)");
 					Assert::AreEqual(0, affected);
 				}
 

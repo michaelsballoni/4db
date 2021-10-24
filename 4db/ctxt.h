@@ -3,6 +3,7 @@
 #include "includes.h"
 
 #include "db.h"
+#include "names.h"
 #include "tables.h"
 #include "types.h"
 
@@ -19,12 +20,12 @@ namespace fourdb
                 {
                     db db(dbFilePath.c_str());
 
-                    db.execSql("PRAGMA journal_mode = WAL");
-                    db.execSql("PRAGMA synchronous = NORMAL");
+                    db.execSql(L"PRAGMA journal_mode = WAL");
+                    db.execSql(L"PRAGMA synchronous = NORMAL");
                     
                     runSql(db, tables::createSql());
-                    /*
                     runSql(db, names::createSql());
+                    /*
                     runSql(db, values::createSql());
                     runSql(db, items::createSql());
                     */
@@ -46,16 +47,16 @@ namespace fourdb
                 return;
             try
             {
-                m_db->execSql("BEGIN");
+                m_db->execSql(L"BEGIN");
                 for (const auto& sql : m_postItemOps)
                     m_db->execSql(sql);
-                m_db->execSql("COMMIT");
+                m_db->execSql(L"COMMIT");
                 m_postItemOps.clear();
             }
-            catch (const std::exception&)
+            catch (...)
             {
                 m_postItemOps.clear();
-                m_db->execSql("ROLLBACK");
+                m_db->execSql(L"ROLLBACK");
                 throw;
             }
         }
@@ -74,7 +75,7 @@ namespace fourdb
         std::vector<std::wstring> m_postItemOps;
 
 	private:
-		static void runSql(db& db, const char** queries)
+		static void runSql(db& db, const wchar_t** queries)
 		{
             for (size_t idx = 0; queries[idx] != nullptr; ++idx)
                 db.execSql(queries[idx]);

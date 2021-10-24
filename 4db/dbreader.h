@@ -12,10 +12,9 @@ namespace fourdb
             , m_stmt(nullptr)
             , m_doneReading(false)
         {
-// FORNOW - Deal with wstring != u16string on non-Windows
-            int rc = sqlite3_prepare16_v3(m_db, sql.c_str(), sql.size() * 4, 0, &m_stmt, nullptr);
+            int rc = sqlite3_prepare_v3(m_db, toNarrowStr(sql).c_str(), sql.size() * 4, 0, &m_stmt, nullptr);
             if (rc != SQLITE_OK)
-                throw seadberr(rc, db);
+                throw fourdberr(rc, db);
         }
 
         ~dbreader()
@@ -39,7 +38,7 @@ namespace fourdb
                 return false;
             }
             else
-                throw seadberr(rc, m_db);
+                throw fourdberr(rc, m_db);
         }
 
         std::wstring getString(unsigned idx)

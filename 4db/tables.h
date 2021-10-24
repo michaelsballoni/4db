@@ -78,7 +78,7 @@ namespace fourdb
             }
 
             cmdParams.insert("@isNumeric", isNumeric);
-            std::wstring insertSql = L"INSERT INTO tables (name, isNumeric) VALUES (@name, @isNumeric) RETURNS ID";
+            std::wstring insertSql = L"INSERT INTO tables (name, isNumeric) VALUES (@name, @isNumeric)";
             id = static_cast<int>(context.getdb().execInsert(insertSql, cmdParams));
             getcache()[name] = id;
             return id;

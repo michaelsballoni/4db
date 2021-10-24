@@ -14,7 +14,7 @@ namespace fourdb
 		{
             {
                 std::lock_guard<std::mutex> lock(getDbBuildLock());
-                if (!std::filesystem::exists(std::filesystem::path(dbFilePath.c_str())))
+                if (!std::filesystem::exists(dbFilePath.c_str()))
                 {
                     db db(dbFilePath.c_str());
                     /* FORNOW

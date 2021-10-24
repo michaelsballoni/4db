@@ -39,17 +39,22 @@ namespace fourdb
             return reader;
         }
 
-        void execSql(const std::string& sql, const paramap& params = paramap())
+        int execSql(const std::string& sql, const paramap& params = paramap())
         {
-            execSql(toWideStr(sql), params);
+            return execSql(toWideStr(sql), params);
         }
 
-        void execSql(const std::wstring& sql, const paramap& params = paramap())
+        int execSql(const std::wstring& sql, const paramap& params = paramap())
         {
-            auto reader = execReader(sql, params);
-            while (reader->read())
+            int rowCount = 0;
             {
+                auto reader = execReader(sql, params);
+                while (reader->read())
+                {
+                    ++rowCount;
+                }
             }
+            return rowCount > 0 ? rowCount : execScalarInt32(L"SELECT changes()").value();
         }
 
         std::optional<int64_t> execScalarInt32(const std::wstring& sql, const paramap& params = paramap())
@@ -81,18 +86,8 @@ namespace fourdb
 
         int64_t execInsert(const std::wstring& sql, const paramap& params = paramap())
         {
-            return execScalarInt64(sql, params).value();
-        }
-
-        int64_t execWithCount(const std::wstring& sql, const paramap& params = paramap())
-        {
             execSql(sql, params);
-            return execScalarInt64(L"SELECT changes()").value();
-        }
-
-        int64_t execWithCount(const std::string& sql, const paramap& params = paramap())
-        {
-            return execWithCount(toWideStr(sql), params);
+            return execScalarInt64(L"select last_insert_rowid()").value();
         }
 
         static std::wstring applyParams(const std::wstring& sql, const paramap& params)

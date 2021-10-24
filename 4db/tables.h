@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ctxt.h"
+#include "db.h"
 
 namespace fourdb
 {
@@ -35,10 +35,10 @@ namespace fourdb
         /// Remove all tables from the database
         /// </summary>
         /// <param name="ctxt">Database connection</param>
-        static void reset(ctxt& context)
+        static void reset(db& db)
         {
             clearCaches();
-            context.getdb().execSql("DELETE FROM tables");
+            db.execSql("DELETE FROM tables");
         }
 
         /// <summary>
@@ -50,7 +50,7 @@ namespace fourdb
         /// <param name="noCreate">Should an exception be thrown if no table found</param>
         /// <param name="noException">Should -1 be returned instead of throwing an exception if the table is not found</param>
         /// <returns>Database row ID for the table</returns>
-        static int getId(ctxt& context, std::wstring name, bool isNumeric = false, bool noCreate = false, bool noException = false)
+        static int getId(db& db, std::wstring name, bool isNumeric = false, bool noCreate = false, bool noException = false)
         {
             std::lock_guard<std::mutex> lock(getmutx());
 
@@ -61,7 +61,7 @@ namespace fourdb
             paramap cmdParams;
             cmdParams.insert("@name", name);
             std::wstring selectSql = L"SELECT id FROM tables WHERE name = @name";
-            std::optional<int> idObj = context.getdb().execScalarInt32(selectSql, cmdParams);
+            std::optional<int> idObj = db.execScalarInt32(selectSql, cmdParams);
             int id = idObj.value_or(-1);
             if (id >= 0)
             {
@@ -79,7 +79,7 @@ namespace fourdb
 
             cmdParams.insert("@isNumeric", isNumeric);
             std::wstring insertSql = L"INSERT INTO tables (name, isNumeric) VALUES (@name, @isNumeric)";
-            id = static_cast<int>(context.getdb().execInsert(insertSql, cmdParams));
+            id = static_cast<int>(db.execInsert(insertSql, cmdParams));
             getcache()[name] = id;
             return id;
         }
@@ -90,7 +90,7 @@ namespace fourdb
         /// <param name="ctxt">Database connection</param>
         /// <param name="id">Table database row ID</param>
         /// <returns></returns>
-        static std::optional<table_obj> getTable(ctxt context, int id)
+        static std::optional<table_obj> getTable(db& db, int id)
         {
             std::lock_guard<std::mutex> lock(getmutx());
 
@@ -102,7 +102,7 @@ namespace fourdb
                 return it->second;
 
             std::wstring sql = L"SELECT name, isNumeric FROM tables WHERE id = " + std::to_wstring(id);
-            auto reader = context.getdb().execReader(sql);
+            auto reader = db.execReader(sql);
             if (!reader->read())
                 throw seaerr("tables.getTable fails to find record: " + std::to_string(id));
 

@@ -3,6 +3,7 @@
 #include "includes.h"
 
 #include "db.h"
+#include "tables.h"
 #include "types.h"
 
 namespace fourdb
@@ -17,14 +18,16 @@ namespace fourdb
                 if (!std::filesystem::exists(dbFilePath.c_str()))
                 {
                     db db(dbFilePath.c_str());
-                    /* FORNOW
-                    runSql(db, Tables.CreateSql);
-                    runSql(db, Names.CreateSql);
-                    runSql(db, Values.CreateSql);
-                    runSql(db, Items.CreateSql);
-                    */
+
                     db.execSql("PRAGMA journal_mode = WAL");
                     db.execSql("PRAGMA synchronous = NORMAL");
+                    
+                    runSql(db, tables::createSql());
+                    /*
+                    runSql(db, names::createSql());
+                    runSql(db, values::createSql());
+                    runSql(db, items::createSql());
+                    */
                 }
             }
 
@@ -44,7 +47,8 @@ namespace fourdb
             try
             {
                 m_db->execSql("BEGIN");
-                runSql(*m_db, m_postItemOps);
+                for (const auto& sql : m_postItemOps)
+                    m_db->execSql(sql);
                 m_db->execSql("COMMIT");
                 m_postItemOps.clear();
             }
@@ -70,10 +74,10 @@ namespace fourdb
         std::vector<std::wstring> m_postItemOps;
 
 	private:
-		static void runSql(db& db, const std::vector<std::wstring>& queries)
+		static void runSql(db& db, const char** queries)
 		{
-            for (const auto& query : queries)
-                db.execSql(query);
+            for (size_t idx = 0; queries[idx] != nullptr; ++idx)
+                db.execSql(queries[idx]);
 		}
 
 		static std::mutex& getDbBuildLock()

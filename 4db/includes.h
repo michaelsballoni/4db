@@ -1,8 +1,5 @@
 #pragma once
 
-#define _SILENCE_ALL_CXX20_DEPRECATION_WARNINGS
-#define _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS
-
 #include "sqlite3.h"
 
 #include <assert.h>

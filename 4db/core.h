@@ -2,6 +2,8 @@
 
 #include "includes.h"
 
+#pragma warning(disable : 4996) // doesn't work when camped in includes.h...so here it is...
+
 namespace fourdb
 {
     class fourdberr : public std::runtime_error
@@ -48,21 +50,14 @@ namespace fourdb
 
     inline std::string toNarrowStr(const std::wstring& str)
     {
-        const wchar_t* from = str.c_str();
-        std::size_t len = str.size();
-        std::vector<char> buffer(len + 1);
-        std::use_facet<std::ctype<wchar_t> >(std::locale("")).narrow(from, from + len, '_', buffer.data());
-        return std::string(buffer.data(), &buffer[len]);
+        std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> converter;
+        return converter.to_bytes(str);
     }
 
     inline std::wstring toWideStr(const std::string& str)
     {
-        return std::wstring(str.begin(), str.end());
-    }
-
-    inline std::wstring toWideStr(const std::u16string& str)
-    {
-        return std::wstring(str.begin(), str.end());
+        std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+        return converter.from_bytes(str);
     }
 
     inline bool isWord(const std::wstring& str)

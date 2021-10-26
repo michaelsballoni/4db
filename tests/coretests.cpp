@@ -26,7 +26,6 @@ namespace fourdb
 			Assert::AreEqual(std::string("foobar"), toNarrowStr(L"foobar"));
 
 			Assert::AreEqual(std::wstring(L"foobar"), toWideStr("foobar"));
-			Assert::AreEqual(std::wstring(L"foobar"), toWideStr(u"foobar"));
 
 			Assert::IsTrue(!isWord(L""));
 			Assert::IsTrue(!isWord(L"9foobar"));

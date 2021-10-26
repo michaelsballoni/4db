@@ -43,7 +43,7 @@ namespace fourdb
 
         std::wstring getString(unsigned idx)
         {
-            return toWideStr((char16_t*)sqlite3_column_text16(m_stmt, idx));
+            return toWideStr(std::string((const char*)sqlite3_column_text(m_stmt, idx)));
         }
 
         double getDouble(unsigned idx)

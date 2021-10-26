@@ -6,6 +6,7 @@
 #include "names.h"
 #include "tables.h"
 #include "types.h"
+#include "values.h"
 
 namespace fourdb
 {
@@ -25,8 +26,8 @@ namespace fourdb
                     
                     runSql(db, tables::createSql());
                     runSql(db, names::createSql());
-                    /*
                     runSql(db, values::createSql());
+                    /*
                     runSql(db, items::createSql());
                     */
                 }

@@ -19,24 +19,24 @@ namespace fourdb
 					std::filesystem::remove(testDbFilePath);
 				ctxt context(testDbFilePath);
 
-				names::reset(context.getdb());
+				names::reset(context.db());
 
 				for (int run = 1; run <= 3; ++run)
 				{
-					int tableid = tables::getId(context.getdb(), L"test-table");
+					int tableid = tables::getId(context.db(), L"test-table");
 					Assert::IsTrue(tableid >= 0);
 
 					bool isNumeric = true;
-					int nameid = names::getId(context.getdb(), tableid, L"test-name", isNumeric);
+					int nameid = names::getId(context.db(), tableid, L"test-name", isNumeric);
 					Assert::IsTrue(nameid >= 0);
 
-					name_obj nameObj = names::getName(context.getdb(), nameid);
+					name_obj nameObj = names::getName(context.db(), nameid);
 					Assert::AreEqual(nameid, nameObj.id);
 					Assert::AreEqual(isNumeric, nameObj.isNumeric);
 					Assert::AreEqual(toWideStr("test-name"), nameObj.name);
 					Assert::AreEqual(tableid, nameObj.tableId);
 
-					bool dbIsNumeric = names::getNameIsNumeric(context.getdb(), nameid);
+					bool dbIsNumeric = names::getNameIsNumeric(context.db(), nameid);
 					Assert::AreEqual(isNumeric, dbIsNumeric);
 				}
 			}

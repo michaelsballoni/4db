@@ -19,24 +19,24 @@ namespace fourdb
 					std::filesystem::remove(testDbFilePath);
 				ctxt context(testDbFilePath);
 
-				values::reset(context.getdb());
+				values::reset(context.db());
 
 				for (int run = 1; run <= 3; ++run)
 				{
 					{
-						int64_t stringId = values::getId(context.getdb(), toWideStr("string value"));
+						int64_t stringId = values::getId(context.db(), toWideStr("string value"));
 						Assert::IsTrue(stringId >= 0);
 
-						strnum stringValue = values::getValue(context.getdb(), stringId);
+						strnum stringValue = values::getValue(context.db(), stringId);
 						Assert::IsTrue(stringValue.isStr());
 						Assert::AreEqual(toWideStr("string value"), stringValue.str());
 					}
 
 					{
-						int64_t numberId = values::getId(context.getdb(), 99.14);
+						int64_t numberId = values::getId(context.db(), 99.14);
 						Assert::IsTrue(numberId >= 0);
 
-						strnum numberValue = values::getValue(context.getdb(), numberId);
+						strnum numberValue = values::getValue(context.db(), numberId);
 						Assert::IsTrue(!numberValue.isStr());
 						Assert::AreEqual(99.14, numberValue.num());	
 					}

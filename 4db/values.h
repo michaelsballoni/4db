@@ -98,7 +98,7 @@ namespace fourdb
                     L"INSERT INTO bvalues (isNumeric, numberValue, stringValue) VALUES (0, 0.0, @stringValue)";
                 int64_t id = db.execInsert(insertSql, params);
                 
-                params.insert("@id", id);
+                params.insert("@id", static_cast<double>(id));
                 std::wstring textInsertSearchSql =
                     L"INSERT INTO bvaluetext (valueid, stringSearchValue) VALUES (@id, @stringValue)";
                 db.execInsert(textInsertSearchSql, params);
@@ -111,7 +111,7 @@ namespace fourdb
                 params.insert("@numberValue", value);
                 std::wstring insertSql =
                     L"INSERT INTO bvalues (isNumeric, numberValue, stringValue) VALUES (1, @numberValue, '')";
-                long id = db.execInsert(insertSql, params);
+                int64_t id = db.execInsert(insertSql, params);
                 return id;
             }
         }

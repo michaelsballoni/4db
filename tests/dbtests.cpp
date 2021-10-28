@@ -35,14 +35,14 @@ namespace fourdb
 
 				{
 					paramap scalarParams;
-					scalarParams.insert("@id", rowId);
+					scalarParams.insert("@id", static_cast<double>(rowId));
 					int bar = my_db.execScalarInt32(L"SELECT bar FROM foo WHERE id = @id", scalarParams).value();
 					Assert::AreEqual(914, bar);
 				}
 
 				{
 					paramap scalarParams;
-					scalarParams.insert("@id", rowId);
+					scalarParams.insert("@id", static_cast<double>(rowId));
 					std::wstring blet = my_db.execScalarString(L"SELECT blet FROM foo WHERE id = @id", scalarParams).value();
 					Assert::AreEqual(toWideStr("monkey"), blet);
 				}
@@ -74,21 +74,21 @@ namespace fourdb
 
 				{
 					paramap deleteParams;
-					deleteParams.insert("@id", rowId);
+					deleteParams.insert("@id", static_cast<double>(rowId));
 					int affected = my_db.execSql(L"DELETE FROM foo WHERE id = @id", deleteParams);
 					Assert::AreEqual(1, affected);
 				}
 
 				{
 					paramap deleteParams;
-					deleteParams.insert("@id", rowId);
+					deleteParams.insert("@id", static_cast<double>(rowId));
 					int affected = my_db.execSql(L"DELETE FROM foo WHERE id = @id", deleteParams);
 					Assert::AreEqual(0, affected);
 				}
 
 				{
 					paramap deleteParams;
-					deleteParams.insert("@id", rowId2);
+					deleteParams.insert("@id", static_cast<double>(rowId2));
 					int affected = my_db.execSql(L"DELETE FROM foo WHERE id = @id", deleteParams);
 					Assert::AreEqual(1, affected);
 				}

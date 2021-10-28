@@ -52,7 +52,7 @@ namespace fourdb
             return rowCount > 0 ? rowCount : execScalarInt32(L"SELECT changes()").value();
         }
 
-        std::optional<int64_t> execScalarInt32(const std::wstring& sql, const paramap& params = paramap())
+        std::optional<int> execScalarInt32(const std::wstring& sql, const paramap& params = paramap())
         {
             auto reader = execReader(sql, params);
             if (reader->read())
@@ -91,7 +91,7 @@ namespace fourdb
             for (const auto& it : params.map())
             {
                 auto paramWstr = toWideStr(it.first);
-                retVal.replace(retVal.find(paramWstr), paramWstr.length(), it.second.toSqlLiteral());
+                replace<std::wstring>(retVal, paramWstr, it.second.toSqlLiteral());
             }
             return retVal;
         }

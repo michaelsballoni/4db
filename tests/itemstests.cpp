@@ -78,7 +78,7 @@ namespace fourdb
                     items::setItemData(context.db(), itemId, itemData);
 
                     auto metadata = items::getItemData(context.db(), itemId);
-                    for (auto kvp : metadata)
+                    for (const auto& kvp : metadata)
                     {
                         std::wstring nameVal = names::getName(context.db(), kvp.first).name;
                         std::wstring valueVal = values::getValue(context.db(), kvp.second).str();

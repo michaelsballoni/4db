@@ -73,8 +73,8 @@ namespace fourdb
         static int64_t getId(db& db, int tableId, int64_t valueId, bool noCreate = false)
         {
             paramap params;
-            params.insert("@tableId", static_cast<double>(tableId));
-            params.insert("@valueId", static_cast<double>(valueId));
+            params.insert(L"@tableId", static_cast<double>(tableId));
+            params.insert(L"@valueId", static_cast<double>(valueId));
 
             {
                 std::wstring selectSql =
@@ -130,9 +130,9 @@ namespace fourdb
                 int64_t valueId = it.second;
 
                 paramap params;
-                params.insert("@itemId", static_cast<double>(itemId));
-                params.insert("@nameId", static_cast<double>(nameId));
-                params.insert("@valueId", static_cast<double>(valueId));
+                params.insert(L"@itemId", static_cast<double>(itemId));
+                params.insert(L"@nameId", static_cast<double>(nameId));
+                params.insert(L"@valueId", static_cast<double>(valueId));
 
                 std::wstring sql;
                 if (valueId >= 0) // add-or-update it

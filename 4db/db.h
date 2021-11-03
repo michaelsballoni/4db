@@ -10,7 +10,7 @@
 
 namespace fourdb
 {
-    typedef vectormap<std::string, strnum> paramap;
+    typedef vectormap<std::wstring, strnum> paramap;
 
     class db
 	{
@@ -90,7 +90,7 @@ namespace fourdb
             std::wstring retVal = sql;
             for (const auto& it : params.map())
             {
-                auto paramWstr = toWideStr(it.first);
+                auto paramWstr = it.first;
                 replace<std::wstring>(retVal, paramWstr, it.second.toSqlLiteral());
             }
             return retVal;

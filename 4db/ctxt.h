@@ -5,6 +5,7 @@
 #include "db.h"
 #include "items.h"
 #include "names.h"
+#include "sql.h"
 #include "tables.h"
 #include "types.h"
 #include "values.h"
@@ -44,6 +45,17 @@ namespace fourdb
         db& db()
         {
             return *m_db;
+        }
+
+        /// <summary>
+        /// Get a reader for a query
+        /// </summary>
+        /// <param name="select">query to execute</param>
+        /// <returns>Reader to get results from</returns>
+        std::shared_ptr<dbreader> execQuery(select query)
+        {
+            std::wstring sql = sql::generateSql(*m_db, query);
+            return m_db->execReader(sql, query.cmdParams);
         }
 
 	private:

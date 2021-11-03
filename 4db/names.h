@@ -74,8 +74,8 @@ namespace fourdb
             */
 
             paramap params;
-            params.insert("@tableId", tableId);
-            params.insert("@name", name);
+            params.insert(L"@tableId", tableId);
+            params.insert(L"@name", name);
             std::wstring selectSql =
                 L"SELECT id FROM names WHERE tableid = @tableId AND name = @name";
             int id = db.execScalarInt32(selectSql, params).value_or(-1);
@@ -93,7 +93,7 @@ namespace fourdb
                     throw fourdberr(toNarrowStr(L"names.getId cannot create new name: " + name));
             }
 
-	        params.insert("@isNumeric", isNumeric);
+	        params.insert(L"@isNumeric", isNumeric);
 	        std::wstring insertSql =
 	            L"INSERT INTO names (tableid, name, isNumeric) VALUES (@tableId, @name, @isNumeric)";
             id = static_cast<int>(db.execInsert(insertSql, params));

@@ -63,6 +63,16 @@ namespace fourdb
         {
             criterias.push_back(_criteria);
         }
+
+        const wchar_t* opName() const
+        {
+            switch (combine)
+            {
+            case criteriaop::AND: return L"AND";
+            case criteriaop::OR: return L"OR";
+            default: return L"unknown";
+            }
+        }
     };
 
     struct order // ORDER BY
@@ -76,14 +86,14 @@ namespace fourdb
         std::vector<std::wstring> selectCols;
         std::wstring from; // FROM
         std::vector<criteriaset> where;
-        std::vector<order> orderby;
+        std::vector<order> orderBy;
         int limit;
 
-        std::unordered_map<std::wstring, strnum> cmdparams;
+        paramap cmdParams;
 
         select& addParam(const std::wstring& name, const strnum& value)
         {
-            cmdparams[name] = value;
+            cmdParams.insert(name, value);
             return *this;
         }
 
@@ -92,7 +102,7 @@ namespace fourdb
             order _order;
             _order.field = name;
             _order.descending = descending;
-            orderby.push_back(_order);
+            orderBy.push_back(_order);
             return *this;
         }
     };

@@ -27,22 +27,22 @@ namespace fourdb
 				int64_t rowId = -1;
 				{
 					paramap insertParams;
-					insertParams.insert("@bar", 914);
-					insertParams.insert("@blet", toWideStr("monkey"));
+					insertParams.insert(L"@bar", 914);
+					insertParams.insert(L"@blet", toWideStr("monkey"));
 					rowId = my_db.execInsert(L"INSERT INTO foo (bar, blet) VALUES (@bar, @blet)", insertParams);
 					Assert::IsTrue(rowId >= 0);
 				}
 
 				{
 					paramap scalarParams;
-					scalarParams.insert("@id", static_cast<double>(rowId));
+					scalarParams.insert(L"@id", static_cast<double>(rowId));
 					int bar = my_db.execScalarInt32(L"SELECT bar FROM foo WHERE id = @id", scalarParams).value();
 					Assert::AreEqual(914, bar);
 				}
 
 				{
 					paramap scalarParams;
-					scalarParams.insert("@id", static_cast<double>(rowId));
+					scalarParams.insert(L"@id", static_cast<double>(rowId));
 					std::wstring blet = my_db.execScalarString(L"SELECT blet FROM foo WHERE id = @id", scalarParams).value();
 					Assert::AreEqual(toWideStr("monkey"), blet);
 				}
@@ -50,8 +50,8 @@ namespace fourdb
 				int64_t rowId2 = -1;
 				{
 					paramap insertParams;
-					insertParams.insert("@bar", 178);
-					insertParams.insert("@blet", toWideStr("freddy"));
+					insertParams.insert(L"@bar", 178);
+					insertParams.insert(L"@blet", toWideStr("freddy"));
 					rowId2 = my_db.execInsert(L"INSERT INTO foo (bar, blet) VALUES (@bar, @blet)", insertParams);
 					Assert::IsTrue(rowId2 > rowId);
 				}
@@ -74,21 +74,21 @@ namespace fourdb
 
 				{
 					paramap deleteParams;
-					deleteParams.insert("@id", static_cast<double>(rowId));
+					deleteParams.insert(L"@id", static_cast<double>(rowId));
 					int affected = my_db.execSql(L"DELETE FROM foo WHERE id = @id", deleteParams);
 					Assert::AreEqual(1, affected);
 				}
 
 				{
 					paramap deleteParams;
-					deleteParams.insert("@id", static_cast<double>(rowId));
+					deleteParams.insert(L"@id", static_cast<double>(rowId));
 					int affected = my_db.execSql(L"DELETE FROM foo WHERE id = @id", deleteParams);
 					Assert::AreEqual(0, affected);
 				}
 
 				{
 					paramap deleteParams;
-					deleteParams.insert("@id", static_cast<double>(rowId2));
+					deleteParams.insert(L"@id", static_cast<double>(rowId2));
 					int affected = my_db.execSql(L"DELETE FROM foo WHERE id = @id", deleteParams);
 					Assert::AreEqual(1, affected);
 				}

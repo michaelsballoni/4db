@@ -8,24 +8,6 @@
 
 namespace fourdb
 {
-    struct define
-    {
-        std::wstring table;
-        strnum key;
-        std::unordered_map<std::wstring, strnum> metadata;
-
-        define(const std::wstring& _table, const strnum& _key)
-            : table(_table)
-            , key(_key)
-        {}
-
-        define& set(const std::wstring& name, const strnum& value)
-        {
-            metadata[name] = value;
-            return *this;
-        }
-    };
-
     struct criteria // WHERE
     {
         std::wstring name;
@@ -107,9 +89,6 @@ namespace fourdb
         }
     };
 
-    struct schemaresponse
-    {
-        // table name => column names, kept in order
-        vectormap<std::wstring, std::vector<std::wstring>> tables;
-    };
+    // table name => column names, all kept in order
+    typedef vectormap<std::wstring, std::vector<std::wstring>> schemaresponse;
 }

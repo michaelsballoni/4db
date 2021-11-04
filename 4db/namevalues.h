@@ -21,11 +21,11 @@ namespace fourdb
         /// <param name="ctxt"></param>
         static void reset(db& db)
         {
-            items.reset(db);
+            items::reset(db);
 
-            values.reset(db);
-            names.reset(db);
-            tables.reset(db);
+            values::reset(db);
+            names::reset(db);
+            tables::reset(db);
         }
 
         /// <summary>
@@ -33,8 +33,8 @@ namespace fourdb
         /// </summary>
         static void clearCaches()
         {
-            names.clearCaches();
-            tables.clearCaches();
+            names::clearCaches();
+            tables::clearCaches();
         }
 
         /// <summary>
@@ -45,14 +45,14 @@ namespace fourdb
         /// <returns>string-to-value metadata</returns>
         static std::unordered_map<std::wstring, strnum> getMetadataValues(db& db, const std::unordered_map<int, int64_t>& ids)
         {
-            std::unordered_map<std::wstring, strnum> retVal;            
+            std::unordered_map<std::wstring, strnum> retVal;
             for (auto kvp : ids)
             {
-                nameObj name = names.getName(db, kvp.first);
-                strnum value = values.getValue(db, kvp.second);
+                name_obj name = names::getName(db, kvp.first);
+                strnum value = values::getValue(db, kvp.second);
                 retVal.insert({ name.name, value });
             }
             return retVal;
         }
-    }
+    };
 }

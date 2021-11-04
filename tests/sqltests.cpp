@@ -21,72 +21,59 @@ namespace fourdb
 
                 // No tables, nothing should still work.
                 {
-                    auto select = sql::parse(L"SELECT somethin\nFROM nothin");
+                    auto select = sql::parse(L"SELECT somethin FROM nothin");
                     auto reader = context.execQuery(select);
                     Assert::IsFalse(reader->read());
                 }
 
-                /* FORNOW
                 // Add a row.
                 {
-                    var define = new Define("somethin", "foo");
-                    define.Set("blet", "monkey");
-                    ctxt.DefineAsync(define).Wait();
+                    paramap metadata;
+                    metadata.insert(L"blet", toWideStr("monkey"));
+                    context.define(L"somethin", toWideStr("foo"), metadata);
                 }
 
                 // Add another row.
                 {
-                    var define = new Define("somethin", "bar");
-                    define.Set("flub", "snake");
-                    ctxt.DefineAsync(define).Wait();
+                    paramap metadata;
+                    metadata.insert(L"flub", toWideStr("snake"));
+                    context.define(L"somethin", toWideStr("bar"), metadata);
                 }
 
                 // Have a table now, but bogus SELECT column
                 {
-                    var select = Sql.Parse("SELECT nothin\nFROM somethin");
-                    using (var reader = ctxt.ExecSelectAsync(select).Result)
-                    {
-                        Assert.IsTrue(reader.Read());
-                        Assert.IsTrue(reader.IsDBNull(0));
-
-                        Assert.IsTrue(reader.Read());
-                        Assert.IsTrue(reader.IsDBNull(0));
-
-                        Assert.IsFalse(reader.Read());
-                    }
+                    auto select = sql::parse(L"SELECT nothin FROM somethin");
+                    auto reader = context.execQuery(select);
+                    Assert::IsTrue(reader->read());
+                    Assert::IsTrue(reader->isNull(0));
                 }
 
                 // Have a table now, but bogus WHERE column bdfadf
                 {
-                    var select = Sql.Parse("SELECT nothin\nFROM somethin\nWHERE value = @foo AND bdfadf = @bdfadf");
-                    select.AddParam("@foo", "foo").AddParam("@bdfadf", 12.0);
-                    using (var reader = ctxt.ExecSelectAsync(select).Result)
-                        Assert.IsFalse(reader.Read());
+                    auto select = sql::parse(L"SELECT nothin FROM somethin WHERE value = @foo AND bdfadf = @bdfadf");
+                    select.addParam(L"@foo", toWideStr("foo")).addParam(L"@bdfadf", 12.0);
+                    auto reader = context.execQuery(select);
+                    Assert::IsFalse(reader->read());
                 }
 
                 // See that it all works
                 {
-                    var select = Sql.Parse("SELECT blet\nFROM somethin\nWHERE value = @foo");
-                    select.AddParam("@foo", "foo");
-                    using (var reader = ctxt.ExecSelectAsync(select).Result)
-                    {
-                        Assert.IsTrue(reader.Read());
-                        Assert.AreEqual("monkey", reader.GetString(0));
-                        Assert.IsFalse(reader.Read());
-                    }
+                    auto select = sql::parse(L"SELECT blet FROM somethin WHERE value = @foo");
+                    select.addParam(L"@foo", toWideStr("foo"));
+                    auto reader = context.execQuery(select);
+                    Assert::IsTrue(reader->read());
+                    Assert::AreEqual(toWideStr("monkey"), reader->getString(0));
+                    Assert::IsFalse(reader->read());
                 }
 
                 {
-                    var select = Sql.Parse("SELECT flub\nFROM somethin\nWHERE value = @bar");
-                    select.AddParam("@bar", "bar");
-                    using (var reader = ctxt.ExecSelectAsync(select).Result)
-                    {
-                        Assert.IsTrue(reader.Read());
-                        Assert.AreEqual("snake", reader.GetString(0));
-                        Assert.IsFalse(reader.Read());
-                    }
+                    auto select = sql::parse(L"SELECT flub FROM somethin WHERE value = @bar");
+                    select.addParam(L"@bar", toWideStr("bar"));
+                    auto reader = context.execQuery(select);
+                    Assert::IsTrue(reader->read());
+                    Assert::AreEqual(toWideStr("snake"), reader->getString(0));
+                    Assert::IsFalse(reader->read());
                 }
-                */
             }
             catch (const std::runtime_error& exp)
             {

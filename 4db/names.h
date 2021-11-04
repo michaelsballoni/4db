@@ -41,8 +41,8 @@ namespace fourdb
         /// <param name="ctxt">Database connection</param>
         static void reset(db& db)
         {
-            clearCaches();
             db.execSql(L"DELETE FROM names");
+            clearCaches();
         }
 
         /// <summary>

@@ -66,6 +66,11 @@ namespace fourdb
             return getInt32(idx) != 0;
         }
 
+        bool isNull(unsigned idx)
+        {
+            return sqlite3_column_type(m_stmt, idx) == SQLITE_NULL;
+        }
+
     private:
         sqlite3* m_db;
         sqlite3_stmt* m_stmt;

@@ -8,7 +8,7 @@
 namespace fourdb
 {
     /// <summary>
-    /// API for turning SQL strings to and from query objects
+    /// API for turning SQL strings to and from Select query objects
     /// </summary>
     class sql
     {
@@ -45,7 +45,7 @@ namespace fourdb
 
                         currentToken = tokens[idx];
 
-                        bool lastColumn = currentToken[currentToken.length() - 1] != L',';
+                        bool lastColumn = currentToken.back() != L',';
                         if (!lastColumn)
                             currentToken = currentToken.substr(0, currentToken.length() - 1);
 
@@ -147,7 +147,7 @@ namespace fourdb
                     {
                         currentToken = tokens[idx];
 
-                        bool currentEnds = idx == tokens.size() - 1 || currentToken[currentToken.length() - 1] != ',';
+                        bool currentEnds = idx == tokens.size() - 1 || currentToken.back() == L',';
 
                         nextToken = L"ASC";
                         if (!currentEnds)
@@ -156,23 +156,23 @@ namespace fourdb
                                 nextToken = tokens[++idx];
                         }
 
-                        bool nextEnds = nextToken[nextToken.length() - 1] != L',';
+                        bool nextEnds = nextToken.back() == L',';
 
                         bool isLimit = _wcsicmp(nextToken.c_str(), L"LIMIT") == 0;
 
                         bool lastColumn = isLimit || !(currentEnds || nextEnds);
 
-                        if (!currentEnds)
+                        if (!currentToken.empty() && currentToken.back() == L',')
                             currentToken = currentToken.substr(0, currentToken.length() - 1);
 
-                        if (!nextEnds)
+                        if (!nextToken.empty() && nextToken.back() == L',')
                             nextToken = nextToken.substr(0, nextToken.length() - 1);
 
                         bool isDescending;
                         {
                             if (_wcsicmp(nextToken.c_str(), L"ASC") == 0)
                                 isDescending = false;
-                            if (_wcsicmp(nextToken.c_str(), L"DESC") == 0)
+                            else if (_wcsicmp(nextToken.c_str(), L"DESC") == 0)
                                 isDescending = true;
                             else if (isLimit)
                                 isDescending = false;
@@ -210,7 +210,7 @@ namespace fourdb
 
                         int limitVal = _wtoi(currentToken.c_str());
                         if (limitVal <= 0)
-                            throw fourdberr("Invalid LIMIT value" + toNarrowStr(sql));
+                            throw fourdberr("Invalid LIMIT value: " + toNarrowStr(sql));
                         retVal.limit = limitVal;
 
                         ++idx;
@@ -284,7 +284,7 @@ namespace fourdb
             //
             // SETUP
             //
-            int tableId = tables::getId(db, query.from, true, true);
+            int tableId = tables::getId(db, query.from, false, true, true);
             auto tableObj = tables::getTable(db, tableId);
 
             // Gather columns
@@ -322,7 +322,7 @@ namespace fourdb
                 {
                     std::optional<name_obj> nameObj;
                     {
-                        int nameId = names::getId(db, tableId, name, true, true);
+                        int nameId = names::getId(db, tableId, name, false, true, true);
                         if (nameId < 0)
                             nameObj = std::nullopt;
                         else

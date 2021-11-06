@@ -124,26 +124,29 @@ namespace fourdb
             int64_t valueId = values::getId(*m_db, key);
             int64_t itemId = items::getId(*m_db, tableId, valueId);
 
-            // name => nameid
             std::unordered_map<int, int64_t> nameValueIds;
             for (auto kvp : columnData.map())
             {
                 bool isMetadataNumeric = !kvp.second.isStr();
                 int nameId = names::getId(*m_db, tableId, kvp.first, isMetadataNumeric);
-                /* FORNOW
-                if (kvp.Value == null) // erase value
-                {
-                    nameValueIds[nameId] = -1;
-                    continue;
-                }
-                */
                 bool isNameNumeric = names::getNameIsNumeric(*m_db, nameId);
-                bool isValueNumeric = !kvp.second.isStr();
-                if (isValueNumeric != isNameNumeric)
+                if (isMetadataNumeric != isNameNumeric)
+                {
                     throw fourdberr("Data numeric does not match name");
+                }
                 nameValueIds[nameId] = values::getId(*m_db, kvp.second);
             }
             items::setItemData(*m_db, itemId, nameValueIds);
+        }
+
+        void undefine(const std::wstring& table, const strnum& key, const std::wstring& name)
+        {
+            bool isKeyNumeric = !key.isStr();
+            int tableId = tables::getId(*m_db, table, isKeyNumeric, true);
+            int64_t valueId = values::getId(*m_db, key);
+            int64_t itemId = items::getId(*m_db, tableId, valueId);
+            int nameId = names::getId(*m_db, tableId, name, false, true);
+            items::removeItemData(*m_db, itemId, nameId);
         }
 
         std::wstring generateSql(select query)

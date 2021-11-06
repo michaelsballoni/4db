@@ -134,21 +134,33 @@ namespace fourdb
                 params.insert(L"@nameId", static_cast<double>(nameId));
                 params.insert(L"@valueId", static_cast<double>(valueId));
 
-                std::wstring sql;
-                if (valueId >= 0) // add-or-update it
-                {
-                    sql =
+                std::wstring sql =
                         L"INSERT INTO itemnamevalues (itemid, nameid, valueid) "
                         L"VALUES (@itemId, @nameId, @valueId) "
                         L"ON CONFLICT(itemid, nameid) "
                         L"DO UPDATE SET valueid = @valueId";
-                }
-                else // remove it
-                {
-                    sql = L"DELETE FROM itemnamevalues WHERE itemid = @itemId AND nameid = @nameId";
-                }
                 db.execSql(sql, params);
             }
+        }
+
+        /// <summary>
+        /// Given an item remove name metadata from the database
+        /// </summary>
+        /// <param name="db">Database connection</param>
+        /// <param name="itemId">The item to add metadata to</param>
+        /// <param name="nameId">The name ID of the metadata to remove from the item</param>
+        static void removeItemData(db& db, int64_t itemId, int nameId)
+        {
+            std::wstring updateSql =
+                L"UPDATE items SET lastmodified = DATETIME('now') WHERE id = " + std::to_wstring(itemId);
+            db.execSql(updateSql);
+
+            paramap params;
+            params.insert(L"@itemId", static_cast<double>(itemId));
+            params.insert(L"@nameId", static_cast<double>(nameId));
+
+            std::wstring sql = L"DELETE FROM itemnamevalues WHERE itemid = @itemId AND nameid = @nameId";
+            db.execSql(sql, params);
         }
 
         /// <summary>

@@ -76,4 +76,16 @@ namespace fourdb
    
         return true;
     }
+
+    inline std::wstring join(const std::vector<std::wstring>& strs, const wchar_t* seperator)
+    {
+        std::wstring retVal;
+        for (const auto& str : strs)
+        {
+            if (!retVal.empty())
+                retVal += seperator;
+            retVal += str;
+        }
+        return retVal;
+    }
 }

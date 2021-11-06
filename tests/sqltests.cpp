@@ -18,6 +18,7 @@ namespace fourdb
                 if (std::filesystem::exists(testDbFilePath))
                     std::filesystem::remove(testDbFilePath);
                 ctxt context(testDbFilePath);
+                namevalues::clearCaches();
 
                 // No tables, nothing should still work.
                 {
@@ -72,6 +73,18 @@ namespace fourdb
                     auto reader = context.execQuery(select);
                     Assert::IsTrue(reader->read());
                     Assert::AreEqual(toWideStr("snake"), reader->getString(0));
+                    Assert::IsFalse(reader->read());
+                }
+
+                // Remove metadata row, see it select as null.
+                context.undefine(L"somethin", toWideStr("bar"), toWideStr("flub"));
+
+                {
+                    auto select = sql::parse(L"SELECT flub FROM somethin WHERE value = @bar");
+                    select.addParam(L"@bar", toWideStr("bar"));
+                    auto reader = context.execQuery(select);
+                    Assert::IsTrue(reader->read());
+                    Assert::IsTrue(reader->isNull(0));
                     Assert::IsFalse(reader->read());
                 }
             }

@@ -18,6 +18,7 @@ namespace fourdb
 				if (std::filesystem::exists(testDbFilePath))
 					std::filesystem::remove(testDbFilePath);
 				ctxt context(testDbFilePath);
+				namevalues::clearCaches();
 
 				values::reset(context.db());
 

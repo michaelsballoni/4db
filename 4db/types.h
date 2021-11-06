@@ -69,7 +69,7 @@ namespace fourdb
         std::wstring from; // FROM
         std::vector<criteriaset> where;
         std::vector<order> orderBy;
-        int limit;
+        int limit = -1;
 
         paramap cmdParams;
 

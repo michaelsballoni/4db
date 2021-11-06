@@ -18,6 +18,8 @@ namespace fourdb
                 if (std::filesystem::exists(testDbFilePath))
                     std::filesystem::remove(testDbFilePath);
                 ctxt context(testDbFilePath);
+                namevalues::clearCaches();
+
                 db& db = context.db();
 
                 int tableId = tables::getId(db, L"ape");

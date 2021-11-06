@@ -21,13 +21,13 @@ namespace fourdb
                 namevalues::clearCaches();
                 {
                     auto select = sql::parse(L"SELECT foo, bar\nFROM bletmonkey");
-                    Assert::AreEqual(toWideStr("foo, bar"), join(select.selectCols, L", "));
+                    Assert::AreEqual(toWideStr("foo, bar"), join<wchar_t>(select.selectCols, L", "));
                     Assert::AreEqual(toWideStr("bletmonkey"), select.from);
                 }
 
                 {
                     auto select = sql::parse(L"SELECT foo, bar\nFROM bletmonkey\nWHERE some <> @all");
-                    Assert::AreEqual(toWideStr("foo, bar"), join(select.selectCols, L", "));
+                    Assert::AreEqual(toWideStr("foo, bar"), join<wchar_t>(select.selectCols, L", "));
                     Assert::AreEqual(toWideStr("bletmonkey"), select.from);
                     Assert::AreEqual(1U, select.where[0].criterias.size());
                     Assert::AreEqual(toWideStr("some"), select.where[0].criterias[0].name);
@@ -37,7 +37,7 @@ namespace fourdb
 
                 {
                     auto select = sql::parse(L"SELECT foo, bar\nFROM bletmonkey\nWHERE some <> @all AND all > @okay");
-                    Assert::AreEqual(toWideStr("foo, bar"), join(select.selectCols, L", "));
+                    Assert::AreEqual(toWideStr("foo, bar"), join<wchar_t>(select.selectCols, L", "));
                     Assert::AreEqual(toWideStr("bletmonkey"), select.from);
                     Assert::AreEqual(2U, select.where[0].criterias.size());
                     Assert::AreEqual(toWideStr("some"), select.where[0].criterias[0].name);
@@ -50,7 +50,7 @@ namespace fourdb
 
                 {
                     auto select = sql::parse(L"SELECT foo, bar, good\nFROM bletmonkey\nORDER BY good DESC");
-                    Assert::AreEqual(toWideStr("foo, bar, good"), join(select.selectCols, L", "));
+                    Assert::AreEqual(toWideStr("foo, bar, good"), join<wchar_t>(select.selectCols, L", "));
                     Assert::AreEqual(toWideStr("bletmonkey"), select.from);
                     Assert::AreEqual(1U, select.orderBy.size());
                     Assert::AreEqual(toWideStr("good"), select.orderBy[0].field);
@@ -59,7 +59,7 @@ namespace fourdb
 
                 {
                     auto select = sql::parse(L"SELECT foo, bar, good, bad\nFROM bletmonkey\nORDER BY good DESC, bad ASC");
-                    Assert::AreEqual(toWideStr("foo, bar, good, bad"), join(select.selectCols, L", "));
+                    Assert::AreEqual(toWideStr("foo, bar, good, bad"), join<wchar_t>(select.selectCols, L", "));
                     Assert::AreEqual(toWideStr("bletmonkey"), select.from);
                     Assert::AreEqual(2U, select.orderBy.size());
                     Assert::AreEqual(toWideStr("good"), select.orderBy[0].field);
@@ -70,7 +70,7 @@ namespace fourdb
 
                 {
                     auto select = sql::parse(L"SELECT foo, bar\nFROM bletmonkey\nLIMIT 1492");
-                    Assert::AreEqual(toWideStr("foo, bar"), join(select.selectCols, L", "));
+                    Assert::AreEqual(toWideStr("foo, bar"), join<wchar_t>(select.selectCols, L", "));
                     Assert::AreEqual(toWideStr("bletmonkey"), select.from);
                     Assert::AreEqual(1492, select.limit);
                 }

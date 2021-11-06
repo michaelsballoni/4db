@@ -32,10 +32,10 @@ namespace fourdb
 			Assert::IsTrue(!isWord(L"bletMonkey=="));
 			Assert::IsTrue(isWord(L"foo_bar-914"));
 
-			Assert::AreEqual(toWideStr(""), join(std::vector<std::wstring>(), L"; "));
-			Assert::AreEqual(toWideStr("1"), join(std::vector<std::wstring>{ L"1" }, L"; "));
-			Assert::AreEqual(toWideStr("1; 2"), join(std::vector<std::wstring>{ L"1", L"2" }, L"; "));
-			Assert::AreEqual(toWideStr("1; 2; 3"), join(std::vector<std::wstring>{ L"1", L"2", L"3" }, L"; "));
+			Assert::AreEqual(toWideStr(""), join<wchar_t>(std::vector<std::wstring>(), L"; "));
+			Assert::AreEqual(toWideStr("1"), join<wchar_t>(std::vector<std::wstring>{ L"1" }, L"; "));
+			Assert::AreEqual(toWideStr("1; 2"), join<wchar_t>(std::vector<std::wstring>{ L"1", L"2" }, L"; "));
+			Assert::AreEqual(toWideStr("1; 2; 3"), join<wchar_t>(std::vector<std::wstring>{ L"1", L"2", L"3" }, L"; "));
 		}
 
 		TEST_METHOD(TestStrnum)

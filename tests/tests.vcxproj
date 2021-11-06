@@ -182,6 +182,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="sqlparsertests.cpp" />
+    <ClCompile Include="sqlparsertestsex.cpp" />
     <ClCompile Include="sqltests.cpp" />
     <ClCompile Include="tablestests.cpp" />
     <ClCompile Include="valuestests.cpp" />

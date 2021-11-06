@@ -22,7 +22,7 @@ namespace fourdb
         {
             std::vector<std::wstring> tokens = tokenize(sql);
             if (tokens.empty())
-                throw fourdberr("No tokens: " + toNarrowStr(sql));
+                throw fourdberr("No tokens");
 
             select retVal;
             state curState = state::SELECT;
@@ -34,14 +34,14 @@ namespace fourdb
                 {
                     // Should start with SELECT
                     if (_wcsicmp(currentToken.c_str(), L"SELECT") != 0)
-                        throw fourdberr("No SELECT: " + toNarrowStr(sql));
+                        throw fourdberr("No SELECT");
 
                     // Slurp up the SELECT columns
                     while (true)
                     {
                         ++idx;
                         if (idx >= tokens.size())
-                            throw fourdberr("No SELECT columns: " + toNarrowStr(sql));
+                            throw fourdberr("No SELECT columns");
 
                         currentToken = tokens[idx];
 
@@ -65,11 +65,11 @@ namespace fourdb
                 if (curState == state::FROM)
                 {
                     if (_wcsicmp(currentToken.c_str(), L"FROM") != 0)
-                        throw fourdberr("No FROM: " + toNarrowStr(sql));
+                        throw fourdberr("No FROM");
 
                     ++idx;
                     if (idx >= tokens.size())
-                        throw fourdberr("No FROM table: " + toNarrowStr(sql));
+                        throw fourdberr("No FROM table");
 
                     currentToken = tokens[idx];
                     // FORNOW
@@ -119,6 +119,9 @@ namespace fourdb
                             break;
                         }
                     }
+
+                    if (crits.criterias.empty())
+                        throw fourdberr("No WHERE criteria");
 
                     curState = state::ORDER;
                     continue;
@@ -177,7 +180,7 @@ namespace fourdb
                             else if (isLimit)
                                 isDescending = false;
                             else
-                                throw fourdberr("Invalid ORDER BY: " + toNarrowStr(sql));
+                                throw fourdberr("Invalid ORDER BY");
                         }
 
                         // FORNOW
@@ -205,12 +208,12 @@ namespace fourdb
                     {
                         ++idx;
                         if (idx >= tokens.size())
-                            throw fourdberr("No LIMIT value" + toNarrowStr(sql));
+                            throw fourdberr("No LIMIT value");
                         currentToken = tokens[idx];
 
                         int limitVal = _wtoi(currentToken.c_str());
                         if (limitVal <= 0)
-                            throw fourdberr("Invalid LIMIT value: " + toNarrowStr(sql));
+                            throw fourdberr("Invalid LIMIT value");
                         retVal.limit = limitVal;
 
                         ++idx;
@@ -218,21 +221,21 @@ namespace fourdb
                     }
                     else
                     {
-                        throw fourdberr("Invalid final statement: " + toNarrowStr(sql));
+                        throw fourdberr("Invalid final statement");
                     }
                 }
 
-                throw fourdberr("Invalid SQL state: " + toNarrowStr(sql));
+                throw fourdberr("Invalid SQL state");
             }
 
             if (idx < tokens.size() - 1)
-                throw fourdberr("Not all parsed: " + toNarrowStr(sql));
+                throw fourdberr("Not all parsed");
 
             if (retVal.selectCols.empty())
-                throw fourdberr("No SELECT columns: " + toNarrowStr(sql));
+                throw fourdberr("No SELECT columns");
 
             if (retVal.from.empty())
-                throw fourdberr("No FROM: " + toNarrowStr(sql));
+                throw fourdberr("No FROM");
 
             return retVal;
         }

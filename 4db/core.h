@@ -77,9 +77,10 @@ namespace fourdb
         return true;
     }
 
-    inline std::wstring join(const std::vector<std::wstring>& strs, const wchar_t* seperator)
+    template <typename CharT>
+    inline std::basic_string<CharT> join(const std::vector<std::basic_string<CharT>>& strs, const CharT* seperator)
     {
-        std::wstring retVal;
+        std::basic_string<CharT> retVal;
         for (const auto& str : strs)
         {
             if (!retVal.empty())

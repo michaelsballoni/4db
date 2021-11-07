@@ -1,0 +1,140 @@
+﻿<!DOCTYPE HTML>
+<!--------------------------------------------------------------------------->  
+<!--                           INTRODUCTION                                
+
+ The CodeProject article submission template (HTML version)
+
+Using this template will help us post your article sooner. To use, just 
+follow the 3 easy steps below:
+ 
+     1. Fill in the article description details
+     2. Add links to your images and downloads
+     3. Include the main article text
+
+That's all there is to it! All formatting will be done by our submission
+scripts and style sheets. 
+
+-->  
+<!--------------------------------------------------------------------------->  
+<!--                        IGNORE THIS SECTION                            -->
+<html>
+<head>
+<title>CodeProject</title>
+<Style>
+BODY, P, TD { font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 10pt }
+BODY {padding:15px; }
+H2,H3,H4,H5 { color: #ff9900; font-weight: bold; }
+H2 { font-size: 13pt; }
+H3 { font-size: 12pt; }
+H4 { font-size: 10pt; color: black; }
+PRE { BACKGROUND-COLOR: #FBEDBB; FONT-FAMILY: "Courier New", Courier, mono; WHITE-SPACE: pre; }
+CODE { COLOR: #990000; FONT-FAMILY: "Courier New", Courier, mono; }
+</style>
+<link type="text/css" rel="stylesheet" 
+      href="https://codeproject.global.ssl.fastly.net/App_Themes/CodeProject/Css/Main.min.css">
+</head>
+<body bgcolor="#FFFFFF" color=#000000>
+<!--------------------------------------------------------------------------->  
+
+
+<!-------------------------------     STEP 1      --------------------------->
+<!--  Fill in the details (CodeProject will reformat this section for you) -->
+
+<pre>
+Title:       4db: A dynamic file-based NoSQL database for C++
+Description: Wanna add database functionality to your C++ app?  Too lazy to use SQLite directly?  Read on!
+Abstract:    4db provides a simple, easy-to-use database engine for C++ projects.
+             Based on SQLite, 4db is file-based and portable.
+             It provides the common things you do with SQL-type data in a simple but powerful API.
+             If you want to add basic data persistence to your project, look no further than 4db.
+
+Author:      Michael Sydney Balloni
+Email:       balloni.michael@yahoo.com
+
+Language:    C++
+Platform:    Portable, multi-platform
+Technology:  SQLite
+Topic:       Databases
+
+Section      Not
+SubSection   Sure
+
+License:     Apache 2.0
+</pre>
+
+<!-------------------------------     STEP 2      --------------------------->
+<!--  Include download and sample image information.                       --> 
+
+<ul class=download>
+<li><a href="Article_demo.zip">Download demo project - XXX Kb </a></li>
+<li><a href="Article_src.zip">Download source - XXX Kb</a></li>
+</ul>
+
+<!-------------------------------     STEP 3      --------------------------->
+
+<!--  Add the article text. Please use simple formatting (<h2>, <p> etc)   -->
+
+<h2>Introduction</h2>
+
+<p>
+    In this article we will cover the background, interface, and implementation of 4db,
+    a dynamic, file-based NoSQL database.
+</p>
+
+<p>
+    4db draws its roots from various things called metastrings over the years.
+    The concept has always been to present what looks like a rows-and-columns SQL interface
+    with an implementation in a "real" SQL database with the "virtual"
+    rows and column data pulled out into separate real tables, 
+    all columns in the virtual schema in a "names" table,
+    and every unique value in the database in a "values" table,
+    glued together by all rows in an "items" table 
+    and the item->name->value data cells in an "itemnamevalues" table.
+</p>
+
+<p>
+    metastrings has been many things over the years, and is survived in .NET by 4db.net,
+    but 4db is a new C++ port that is clean and portable, built on the SQLite C API.
+</p>
+
+<h2>The Article Body</h2>
+
+<h3>Using the code</h3>
+
+<p>Lead with code!</p>
+
+<pre>//
+// Any source code blocks look like this
+//
+var i = 0;
+...</pre>
+
+<p>It's always good to cut to the chase, but always include a discussion on how to
+ use the article or code. The <code>class</code> names, the methods and properties,
+ or any tricks or tips. </p>
+
+<p>Remember to set the Language of your code snippet using the Language dropdown. </p>
+
+<h3>Basic principles</h2>
+
+<p>Are there basic principles you need to introduce to the reader for them to
+understand the code or the topic? Links to other articles or online docs may
+be helpful</p>
+
+<h3>Step by Step walk-throughs</h3>
+
+<p>For walk-through style articles ensure your screenshots, code samples and code
+are up to date, or at the least ensure you're clear on what version of a technology
+you're discussing. APIs change!</p>
+
+<h2>Conclusion and Points of Interest</h2>
+
+<p>What did the reader learn in this article? Did you learn anything interesting/fun/annoying 
+while writing the code? Any gotchas you came across?</p>
+
+
+<!-------------------------------    That's it!   --------------------------->
+</body>
+
+</html>
+

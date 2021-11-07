@@ -49,8 +49,7 @@ namespace fourdb
                         if (!lastColumn)
                             currentToken = currentToken.substr(0, currentToken.length() - 1);
 
-                        // FORNOW
-                        //Utils.ValidateColumnName(currentToken, sql);
+                        validateColumnName(currentToken);
                         retVal.selectCols.push_back(currentToken);
 
                         if (lastColumn)
@@ -72,8 +71,7 @@ namespace fourdb
                         throw fourdberr("No FROM table");
 
                     currentToken = tokens[idx];
-                    // FORNOW
-                    //Utils.ValidateTableName(currentToken, sql);
+                    validateTableName(currentToken);
                     retVal.from = currentToken;
                     ++idx;
                     curState = state::WHERE;
@@ -98,10 +96,9 @@ namespace fourdb
                         crit.name = tokens[idx++];
                         crit.op = tokens[idx++];
                         crit.paramName = tokens[idx++];
-                        // FORNOW
-                        //Utils.ValidateColumnName(crit.name, sql);
-                        //Utils.ValidateOperator(crit.op, sql);
-                        //Utils.ValidateParameterName(crit.paramName, sql);
+                        validateColumnName(crit.name);
+                        validateOperator(crit.op);
+                        validateParameterName(crit.paramName);
                         crits.addCriteria(crit);
 
                         if
@@ -183,8 +180,7 @@ namespace fourdb
                                 throw fourdberr("Invalid ORDER BY");
                         }
 
-                        // FORNOW
-                        //Utils.ValidateColumnName(currentToken, sql);
+                        validateColumnName(currentToken);
 
                         order orderObj;
                         orderObj.field = currentToken;
@@ -271,17 +267,15 @@ namespace fourdb
                 }
             }
 
-            /* FORNOW
             for (const auto& crits : query.where)
             {
-                for (const auto& crit : crits.criteria)
+                for (const auto& crit : crits.criterias)
                 {
-                    Utils.ValidateColumnName(criteria.name, "WHERE");
-                    Utils.ValidateOperator(criteria.op, "WHERE");
-                    Utils.ValidateParameterName(criteria.paramName, "WHERE");
+                    validateColumnName(crit.name);
+                    validateOperator(crit.op);
+                    validateParameterName(crit.paramName);
                 }
             }
-            */
 
 
             //
@@ -315,13 +309,11 @@ namespace fourdb
             std::unordered_map<std::wstring, std::optional<name_obj>> nameObjs;
             for (const auto& name : names)
             {
-                /* FORNOW
-                if (Utils.IsNameReserved(name))
+                if (isNameReserved(name))
                 {
-                    nameObjs.Add(name, null);
+                    nameObjs.insert({ name, std::nullopt });
                 }
                 else
-                */
                 {
                     std::optional<name_obj> nameObj;
                     {
@@ -342,7 +334,7 @@ namespace fourdb
             std::wstring selectPart;
             for (const auto& name : query.selectCols)
             {
-                auto cleanName = name; // FORNOW Utils.CleanName(name);
+                auto cleanName = cleanseName(name);
 
                 if (!selectPart.empty())
                     selectPart += L",\r\n";
@@ -385,10 +377,9 @@ namespace fourdb
 
             for (const auto& name : names)
             {
-                // FORNOW - if !Utils.IsNameReserved(name)
-                if (nameObjs[name].has_value())
+                if (!isNameReserved(name) && nameObjs[name].has_value())
                 {
-                    auto cleanName = name; // FORNOW Utils.CleanName(name);
+                    auto cleanName = cleanseName(name);
                     fromPart +=
                         L"\r\nLEFT OUTER JOIN itemvalues AS iv" + cleanName + L" ON iv" + cleanName + L".itemid = i.id"
                         L" AND iv" + cleanName + L".nameid = " + std::to_wstring(nameObjs[name]->id);
@@ -415,7 +406,7 @@ namespace fourdb
                         wherePart += L" " + std::wstring(crits.opName()) + L" ";
 
                     auto nameObj = nameObjs[name];
-                    auto cleanName = name; // FORNOW Utils.CleanName(name);
+                    auto cleanName = cleanseName(name);
 
                     if (_wcsicmp(where.op.c_str(), L"MATCHES") == 0)
                     {
@@ -484,10 +475,8 @@ namespace fourdb
                     orderBy += L",\r\n";
 
                 std::wstring orderColumn = order.field;
-                /* FORNOW
-                if (!Utils.IsNameReserved(orderColumn))
-                    orderColumn = Utils.CleanName(orderColumn);
-                */
+                if (!isNameReserved(orderColumn))
+                    orderColumn = cleanseName(orderColumn);
 
                 orderBy += orderColumn + (order.descending ? L" DESC" : L" ASC");
             }

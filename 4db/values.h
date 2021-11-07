@@ -137,51 +137,5 @@ namespace fourdb
             else
                 return reader->getString(2);
         }
-
-        /* FORNOW - Needed?
-        /// <summary>
-        /// Pre-cache all values in given a set of MySQL table bvalues row IDs
-        /// </summary>
-        /// <param name="ctxt">Object for interacting with the database</param>
-        /// <param name="ids">MySQL table bvalues row IDs</param>
-        /// <returns></returns>
-        public static async Task CacheValuesAsync(Context ctxt, IEnumerable<long> ids)
-        {
-            var totalTimer = ScopeTiming.StartTiming();
-            try
-            {
-                var stillToGet = ids.Where(id => !sm_cacheBack.ContainsKey(id));
-                if (!stillToGet.Any())
-                    return;
-
-                var valueIdInPart = string.Join(",", stillToGet.Select(i => i.ToString()));
-                var sql = $"SELECT id, isNumeric, numberValue, stringValue FROM bvalues WHERE id IN ({valueIdInPart})";
-                if (sql.Length > 32 * 1024)
-                    throw new MetaStringsException("GetValues query exceeds SQL batch limit of 1M.  Use a smaller batch of items.");
-
-                using (var reader = await ctxt.Db.ExecuteReaderAsync(sql).ConfigureAwait(false))
-                {
-                    while (await reader.ReadAsync().ConfigureAwait(false))
-                    {
-                        long id = reader.GetInt64(0);
-
-                        bool isNumeric = reader.GetBoolean(1);
-
-                        object obj;
-                        if (isNumeric)
-                            obj = reader.GetDouble(2);
-                        else
-                            obj = reader.GetString(3);
-
-                        sm_cacheBack[id] = obj;
-                    }
-                }
-            }
-            finally
-            {
-                ScopeTiming.RecordScope("Values.CacheValues", totalTimer);
-            }
-        }
-        */
     };
 }

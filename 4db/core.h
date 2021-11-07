@@ -77,6 +77,92 @@ namespace fourdb
         return true;
     }
 
+    inline std::wstring toLower(const std::wstring& str)
+    {
+        std::wstring retVal;
+        for (auto c : str)
+            retVal += towlower(c);
+        return retVal;
+    }
+
+    inline bool isNameReserved(const std::wstring& name)
+    {
+        static std::unordered_set<std::wstring> names
+        {
+            L"select",
+            L"from",
+            L"where",
+            L"order",
+            L"limit",
+            L"value",
+            L"id",
+            L"count",
+            L"created",
+            L"lastmodified",
+            L"rank"
+        };
+        return names.find(toLower(name)) != names.end();
+    }
+
+    inline bool isValidOp(const std::wstring& op)
+    {
+        static std::unordered_set<std::wstring> ops
+        {
+            L"=",
+            L"==",
+            L"!=",
+            L"<>",
+            L">",
+            L">=",
+            L"!>",
+            L"<",
+            L"<=",
+            L"!<",
+            L"matches",
+            L"like"
+        };
+        return ops.find(toLower(op)) != ops.end();
+    }
+
+    inline void validateTableName(const std::wstring& name)
+    {
+        if (!isWord(name))
+            throw fourdberr("Invalid table name: " + toNarrowStr(name));
+    }
+
+    inline void validateColumnName(const std::wstring& name)
+    {
+        if (!isWord(name))
+            throw fourdberr("Invalid column name: " + toNarrowStr(name));
+    }
+
+    inline void validateOperator(const std::wstring& op)
+    {
+        if (!isValidOp(op))
+            throw fourdberr("Invalid query operator: " + toNarrowStr(op));
+    }
+
+    inline void validateParameterName(const std::wstring& name)
+    {
+        if (name.empty() || name[0] != L'@' || !isWord(name.substr(1)))
+            throw fourdberr("Invalid parameter name: " + toNarrowStr(name));
+    }
+
+    inline std::wstring cleanseName(const std::wstring& name) // used for table and column aliases
+    {
+        std::wstring clean;
+        for (auto c : name)
+        {
+            if (iswalnum(c))
+                clean += c;
+        }
+
+        if (clean.empty())
+            clean = L"a";
+
+        return clean;
+    }
+
     template <typename CharT>
     inline std::basic_string<CharT> join(const std::vector<std::basic_string<CharT>>& strs, const CharT* seperator)
     {

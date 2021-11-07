@@ -203,7 +203,6 @@ namespace fourdb
                 Assert::AreEqual(toWideStr("LIKE"), criteria3.op);
                 Assert::AreEqual(toWideStr("@greatness"), criteria3.paramName);
 
-                /* FORNOW 
                 sql = L"SELECT foo FROM something WHERE !foo = @foo";
                 try
                 {
@@ -236,7 +235,6 @@ namespace fourdb
                 {
                     Assert::AreEqual(std::string("Invalid parameter name: @@@foo"), std::string(exp.what()));
                 }
-                */
 
                 sql = L"SELECT foo, fred, blet FROM something WHERE foo = @foo ORDER BY";
                 try

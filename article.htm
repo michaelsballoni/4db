@@ -42,10 +42,10 @@ CODE { COLOR: #990000; FONT-FAMILY: "Courier New", Courier, mono; }
 
 <pre>
 Title:       4db: A dynamic file-based NoSQL database for C++
-Description: Wanna add database functionality to your C++ app?  Too lazy to use SQLite directly?  Read on!
+Description: Wanna add basic database functionality to your C++ app?  Too lazy to use SQLite directly?  Read on!
 Abstract:    4db provides a simple, easy-to-use database engine for C++ projects.
              Based on SQLite, 4db is file-based and portable.
-             It provides the common things you do with SQL-type data in a simple but powerful API.
+             It provides the common things you do with SQL-type data in a simple API.
              If you want to add basic data persistence to your project, look no further than 4db.
 
 Author:      Michael Sydney Balloni
@@ -66,6 +66,7 @@ License:     Apache 2.0
 <!--  Include download and sample image information.                       --> 
 
 <ul class=download>
+    <!-- FORNOW - Add ZIP reference and size here -->
 <li><a href="Article_demo.zip">Download demo project - XXX Kb </a></li>
 <li><a href="Article_src.zip">Download source - XXX Kb</a></li>
 </ul>
@@ -74,63 +75,57 @@ License:     Apache 2.0
 
 <!--  Add the article text. Please use simple formatting (<h2>, <p> etc)   -->
 
-<h2>Introduction</h2>
-
+<h2>Background</h2>
 <p>
     In this article we will cover the background, interface, and implementation of 4db,
-    a dynamic, file-based NoSQL database.
+    a dynamic, file-based NoSQL database for C++ projects.
 </p>
-
 <p>
     4db draws its roots from various things called metastrings over the years.
-    The concept has always been to present what looks like a rows-and-columns SQL interface
-    with an implementation in a "real" SQL database with the "virtual"
-    rows and column data pulled out into separate real tables, 
-    all columns in the virtual schema in a "names" table,
-    and every unique value in the database in a "values" table,
-    glued together by all rows in an "items" table 
-    and the item->name->value data cells in an "itemnamevalues" table.
 </p>
-
 <p>
-    metastrings has been many things over the years, and is survived in .NET by 4db.net,
-    but 4db is a new C++ port that is clean and portable, built on the SQLite C API.
+    metastrings has been many things, and is survived in .NET by 4db.net,
+    which you can get on NuGet...but 4db is a new C++ port.
+    It is modern, clean, and portable, and built on the SQLite C API.
 </p>
 
-<h2>The Article Body</h2>
+<h2>Interface</h2>
+<p>
+    Interacting with 4db is best demonstrated with an annotated sample program...
+</p>
+<pre>
+// FORNOW - Cars sample
+</pre>
 
-<h3>Using the code</h3>
+<h2>Implementation</h2>
+<p>
+    The metastrings concept was always to present what looks like a rows-and-columns SQL interface
+    with an implementation in a "real" SQL database, only MySQL to start, and now only SQLite.
+</p>
+<p>
+    The "virtual" schema's tables are pulled into separate real tables:
+    <ul>
+        <li>A registry of all tables in the virtual schema is stored in the real <u>tables</u>, um, table</li>
+        <li>All columns in all tables are in the <u>names</u> table</li>
+        <li>Every unique value in the entire database - string or double - is stored in the <u>values</u> table</li>
+        <li>Each row in each virtual table is represented by a row in the real <u>items</u> table</li>
+        <li>Everything is glued together by the <u>itemnamevalues</u> table, one row per data cell, itemid -> nameid -> valueid</li>
+    </ul>
+    Tons of overhead here, it would never perform well.
+    But it's simple, and allows for a dynamic schema,
+    and there are tons of use cases where performance isn't a concern.
+    I see a bright future for this technology.
+</p>
 
-<p>Lead with code!</p>
-
-<pre>//
-// Any source code blocks look like this
-//
-var i = 0;
-...</pre>
-
-<p>It's always good to cut to the chase, but always include a discussion on how to
- use the article or code. The <code>class</code> names, the methods and properties,
- or any tricks or tips. </p>
-
-<p>Remember to set the Language of your code snippet using the Language dropdown. </p>
-
-<h3>Basic principles</h2>
-
-<p>Are there basic principles you need to introduce to the reader for them to
-understand the code or the topic? Links to other articles or online docs may
-be helpful</p>
-
-<h3>Step by Step walk-throughs</h3>
-
-<p>For walk-through style articles ensure your screenshots, code samples and code
-are up to date, or at the least ensure you're clear on what version of a technology
-you're discussing. APIs change!</p>
-
-<h2>Conclusion and Points of Interest</h2>
-
-<p>What did the reader learn in this article? Did you learn anything interesting/fun/annoying 
-while writing the code? Any gotchas you came across?</p>
+<h2>Conclusion</h2>
+<p>
+    I hope you've enjoyed learning about 4db.
+    I invite all comments and questions.
+    If you are interested in integrating 4db into your project,
+    feel free to <a target="_blank" href="https://www.michaelballoni.com">reach out to me</a>
+    and pick my brain anywhere along the way.
+    Enjoy!
+</p>
 
 
 <!-------------------------------    That's it!   --------------------------->

@@ -92,8 +92,7 @@ namespace fourdb
 
         int64_t getRowId(const std::wstring& tableName, const strnum& key)
         {
-            // FORNOW
-            //Utils.ValidateTableName(tableName, "GetRowId");
+            validateTableName(tableName);
             auto select = sql::parse(L"SELECT id FROM " + tableName + L" WHERE value = @value");
             select.addParam(L"@value", key);
             return execScalarInt64(select);
@@ -101,8 +100,7 @@ namespace fourdb
 
         double getRowNumberValue(const std::wstring& tableName, int64_t rowId)
         {
-            // FORNOW
-            //Utils.ValidateTableName(tableName, "GetRowId");
+            validateTableName(tableName);
             auto select = sql::parse(L"SELECT value FROM " + tableName + L" WHERE id = @id");
             select.addParam(L"@id", static_cast<double>(rowId));
             return execScalarDouble(select);
@@ -110,8 +108,7 @@ namespace fourdb
 
         std::wstring getRowStringValue(const std::wstring& tableName, int64_t rowId)
         {
-            // FORNOW
-            //Utils.ValidateTableName(tableName, "GetRowId");
+            validateTableName(tableName);
             auto select = sql::parse(L"SELECT value FROM " + tableName + L" WHERE id = @id");
             select.addParam(L"@id", static_cast<double>(rowId));
             return execScalarString(select).value_or(L"");

@@ -337,7 +337,7 @@ namespace fourdb
                 auto cleanName = cleanseName(name);
 
                 if (!selectPart.empty())
-                    selectPart += L",\r\n";
+                    selectPart += L",\n";
 
                 if (name == L"value")
                 {
@@ -356,6 +356,8 @@ namespace fourdb
                     selectPart += L"i.lastmodified";
                 else if (name == L"count")
                     selectPart += L"COUNT(*)";
+                else if (name == L"rank")
+                    selectPart += L"rank";
                 else if (!nameObjs[name].has_value())
                     selectPart += L"NULL";
                 else if (nameObjs[name]->isNumeric)
@@ -365,15 +367,15 @@ namespace fourdb
                 
                 selectPart += L" AS " + cleanName;
             }
-            selectPart = L"SELECT\r\n" + selectPart;
+            selectPart = L"SELECT\n" + selectPart;
 
 
             //
             // FROM
             //
-            std::wstring fromPart = L"FROM\r\nitems AS i";
+            std::wstring fromPart = L"FROM\nitems AS i";
             if (nameObjs.find(L"value") != nameObjs.end())
-                fromPart += L"\r\nJOIN bvalues bv ON bv.id = i.valueid";
+                fromPart += L"\nJOIN bvalues bv ON bv.id = i.valueid";
 
             for (const auto& name : names)
             {
@@ -381,7 +383,7 @@ namespace fourdb
                 {
                     auto cleanName = cleanseName(name);
                     fromPart +=
-                        L"\r\nLEFT OUTER JOIN itemvalues AS iv" + cleanName + L" ON iv" + cleanName + L".itemid = i.id"
+                        L"\nLEFT OUTER JOIN itemvalues AS iv" + cleanName + L" ON iv" + cleanName + L".itemid = i.id"
                         L" AND iv" + cleanName + L".nameid = " + std::to_wstring(nameObjs[name]->id);
                 }
             }
@@ -393,7 +395,7 @@ namespace fourdb
             std::wstring wherePart = L"i.tableid = " + std::to_wstring(tableId);
             for (const auto& crits : query.where)
             {
-                wherePart += L"\r\nAND\r\n";
+                wherePart += L"\nAND\n";
 
                 wherePart += L"(";
                 bool addedOneYet = false;
@@ -419,7 +421,7 @@ namespace fourdb
                             std::wstring matchTableLabel = cleanName == L"value" ? L"bvtValue" : L"bvt" + cleanName;
                             std::wstring matchColumnLabel = cleanName == L"value" ? L"i.valueid" : L"iv" + cleanName + L".valueid";
                                 
-                            fromPart += L" JOIN bvaluetext " + matchTableLabel + L" ON" + matchColumnLabel + L".valueid = " + matchTableLabel;
+                            fromPart += L"\nJOIN bvaluetext " + matchTableLabel + L" ON " + matchColumnLabel + L" = " + matchTableLabel + L".valueid";
                                 
                             wherePart += matchTableLabel + L".stringSearchValue MATCH " + where.paramName;
 
@@ -462,7 +464,7 @@ namespace fourdb
                 wherePart += L")";
             }
             if (!wherePart.empty())
-                wherePart = L"WHERE " + wherePart;
+                wherePart = L"WHERE\n" + wherePart;
 
 
             //
@@ -472,7 +474,7 @@ namespace fourdb
             for (const auto& order : query.orderBy)
             {
                 if (!orderBy.empty())
-                    orderBy += L",\r\n";
+                    orderBy += L",\n";
 
                 std::wstring orderColumn = order.field;
                 if (!isNameReserved(orderColumn))
@@ -482,7 +484,7 @@ namespace fourdb
             }
 
             if (!orderBy.empty())
-                orderBy = L"ORDER BY\r\n" + orderBy;
+                orderBy = L"ORDER BY\n" + orderBy;
 
 
             //
@@ -490,7 +492,7 @@ namespace fourdb
             //
             std::wstring limitPart;
             if (query.limit > 0)
-                limitPart = L"LIMIT\r\n" + std::to_wstring(query.limit);
+                limitPart = L"LIMIT\n" + std::to_wstring(query.limit);
 
 
             //
@@ -500,16 +502,16 @@ namespace fourdb
             
             sql += selectPart;
 
-            sql += L"\r\n\r\n" + fromPart;
+            sql += L"\n\n" + fromPart;
 
             if (!wherePart.empty())
-                sql += L"\r\n\r\n" + wherePart;
+                sql += L"\n\n" + wherePart;
 
             if (!orderBy.empty())
-                sql += L"\r\n\r\n" + orderBy;
+                sql += L"\n\n" + orderBy;
 
             if (!limitPart.empty())
-                sql += L"\r\n\r\n" + limitPart;
+                sql += L"\n\n" + limitPart;
 
             return sql;
         }

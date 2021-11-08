@@ -53,7 +53,24 @@ namespace fourdb
 
         std::wstring getString(unsigned idx)
         {
-            return toWideStr(std::string((const char*)sqlite3_column_text(m_stmt, idx)));
+            auto str = sqlite3_column_text(m_stmt, idx);
+            if (str != nullptr)
+                return toWideStr(str);
+
+            int columnType = sqlite3_column_type(m_stmt, idx);
+            switch (columnType)
+            {
+            case SQLITE_INTEGER:
+                return std::to_wstring(sqlite3_column_int64(m_stmt, idx));
+            case SQLITE_FLOAT:
+                return std::to_wstring(sqlite3_column_double(m_stmt, idx));
+            case SQLITE_NULL:
+                return L"null";
+            case SQLITE_BLOB:
+                return L"blob";
+            default:
+                return L"Unknown column type: " + std::to_wstring(columnType);
+            }
         }
 
         double getDouble(unsigned idx)

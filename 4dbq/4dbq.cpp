@@ -10,7 +10,8 @@ using namespace fourdb;
 FILE* outputFile = nullptr;
 void writeLineToFile(const std::wstring& line)
 {
-    fprintf(outputFile, "%S\n", line.c_str());
+    fprintf(outputFile, "%s\n", toNarrowStr(line).c_str());
+    fflush(outputFile);
 }
 
 void writeLine(const std::wstring& line)
@@ -75,7 +76,7 @@ int main(int argc, char* argv[])
         }
 
         printf("Opening output file...");
-        outputFile = fopen("4dbq.log", "wt,ccs=UTF-8");
+        outputFile = fopen("4dbq.log", "w");
         printf("done!\n");
         if (outputFile == nullptr)
         {
@@ -102,6 +103,8 @@ int main(int argc, char* argv[])
                 std::getline(std::wcin, query);
                 if (query.empty())
                     continue;
+                else if (query == L"quit" || query == L"exit")
+                    break;
 
                 while (true)
                 {
@@ -153,13 +156,13 @@ int main(int argc, char* argv[])
                     ++resultCount;
                 }
 
-                printf("Results: %u\n", resultCount);
+                writeLine(L"Results: " + std::to_wstring(resultCount));
             }
             catch (const fourdberr& exp)
             {
                 printf("ERROR: %s\n", exp.what());
             }
-        }
+        } // loop forever
     }
     catch (const std::exception& exp)
     {

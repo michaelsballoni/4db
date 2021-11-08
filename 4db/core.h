@@ -60,6 +60,12 @@ namespace fourdb
         return converter.from_bytes(str);
     }
 
+    inline std::wstring toWideStr(const void* bytes)
+    {
+        std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+        return converter.from_bytes(reinterpret_cast<const char*>(bytes));
+    }
+
     inline bool isWord(const std::wstring& str)
     {
         if (str.empty())

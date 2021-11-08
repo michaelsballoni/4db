@@ -58,8 +58,7 @@ namespace fourdb
             if (it != getCache().end())
                 return it->second;
 
-            paramap cmdParams;
-            cmdParams.insert(L"@name", name);
+            paramap cmdParams{ { L"@name", name } };
             std::wstring selectSql = L"SELECT id FROM tables WHERE name = @name";
             std::optional<int> idObj = db.execScalarInt32(selectSql, cmdParams);
             int id = idObj.value_or(-1);
@@ -77,7 +76,7 @@ namespace fourdb
                 throw fourdberr("tables.getid cannot create new table: " + toNarrowStr(name));
             }
 
-            cmdParams.insert(L"@isNumeric", isNumeric);
+            cmdParams.insert({ L"@isNumeric", isNumeric });
             std::wstring insertSql = L"INSERT INTO tables (name, isNumeric) VALUES (@name, @isNumeric)";
             id = static_cast<int>(db.execInsert(insertSql, cmdParams));
             getCache()[name] = id;

@@ -29,15 +29,13 @@ namespace fourdb
 
                 // Add a row.
                 {
-                    paramap metadata;
-                    metadata.insert(L"blet", toWideStr("monkey"));
+                    paramap metadata{ { L"blet", toWideStr("monkey") } };
                     context.define(L"somethin", toWideStr("foo"), metadata);
                 }
 
                 // Add another row.
                 {
-                    paramap metadata;
-                    metadata.insert(L"flub", toWideStr("snake"));
+                    paramap metadata{ { L"flub", toWideStr("snake") } };
                     context.define(L"somethin", toWideStr("bar"), metadata);
                 }
 

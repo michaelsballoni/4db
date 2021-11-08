@@ -72,9 +72,11 @@ namespace fourdb
         /// <returns></returns>
         static int64_t getId(db& db, int tableId, int64_t valueId, bool noCreate = false)
         {
-            paramap params;
-            params.insert(L"@tableId", static_cast<double>(tableId));
-            params.insert(L"@valueId", static_cast<double>(valueId));
+            paramap params
+            {
+                { L"@tableId", static_cast<double>(tableId) },
+                { L"@valueId", static_cast<double>(valueId) }
+            };
 
             {
                 std::wstring selectSql =
@@ -129,11 +131,12 @@ namespace fourdb
                 int nameId = it.first;
                 int64_t valueId = it.second;
 
-                paramap params;
-                params.insert(L"@itemId", static_cast<double>(itemId));
-                params.insert(L"@nameId", static_cast<double>(nameId));
-                params.insert(L"@valueId", static_cast<double>(valueId));
-
+                paramap params
+                {
+                    { L"@itemId", static_cast<double>(itemId) },
+                    { L"@nameId", static_cast<double>(nameId) },
+                    { L"@valueId", static_cast<double>(valueId) }
+                };
                 std::wstring sql =
                         L"INSERT INTO itemnamevalues (itemid, nameid, valueid) "
                         L"VALUES (@itemId, @nameId, @valueId) "
@@ -155,10 +158,11 @@ namespace fourdb
                 L"UPDATE items SET lastmodified = DATETIME('now') WHERE id = " + std::to_wstring(itemId);
             db.execSql(updateSql);
 
-            paramap params;
-            params.insert(L"@itemId", static_cast<double>(itemId));
-            params.insert(L"@nameId", static_cast<double>(nameId));
-
+            paramap params
+            {
+                { L"@itemId", static_cast<double>(itemId) },
+                { L"@nameId", static_cast<double>(nameId) }
+            };
             std::wstring sql = L"DELETE FROM itemnamevalues WHERE itemid = @itemId AND nameid = @nameId";
             db.execSql(sql, params);
         }

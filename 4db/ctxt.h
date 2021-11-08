@@ -121,16 +121,17 @@ namespace fourdb
             int64_t valueId = values::getId(*m_db, key);
             int64_t itemId = items::getId(*m_db, tableId, valueId);
 
-            std::unordered_map<int, int64_t> nameValueIds;
-            for (auto kvp : columnData.map())
+            std::unordered_map<int, int64_t> nameValueIds(columnData.size());
+            for (auto kvp : columnData)
             {
                 bool isMetadataNumeric = !kvp.second.isStr();
+
                 int nameId = names::getId(*m_db, tableId, kvp.first, isMetadataNumeric);
                 bool isNameNumeric = names::getNameIsNumeric(*m_db, nameId);
+                
                 if (isMetadataNumeric != isNameNumeric)
-                {
                     throw fourdberr("Data numeric does not match name");
-                }
+
                 nameValueIds[nameId] = values::getId(*m_db, kvp.second);
             }
             items::setItemData(*m_db, itemId, nameValueIds);
@@ -170,11 +171,15 @@ namespace fourdb
 
         void drop(const std::wstring& table)
         {
-            int tableId = tables::getId(*m_db, table, true);
+            int tableId = tables::getId(*m_db, table, true, true, true);
+            if (tableId < 0)
+                return;
+
             m_db->execSql(L"DELETE FROM itemnamevalues WHERE nameid IN (SELECT id FROM names WHERE tableid = " + std::to_wstring(tableId) + L")");
             m_db->execSql(L"DELETE FROM names WHERE tableid = " + std::to_wstring(tableId));
             m_db->execSql(L"DELETE FROM items WHERE tableid = " + std::to_wstring(tableId));
             m_db->execSql(L"DELETE FROM tables WHERE id = " + std::to_wstring(tableId));
+            
             namevalues::clearCaches();
         }
 
@@ -197,7 +202,7 @@ namespace fourdb
 
             paramap cmdParams;
             if (haveRequestedTableName)
-                cmdParams.insert(L"@name", table);
+                cmdParams.insert({ L"@name", table });
 
             schemaresponse response;
             auto reader = m_db->execReader(sql, cmdParams);

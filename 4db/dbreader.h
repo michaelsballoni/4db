@@ -41,6 +41,16 @@ namespace fourdb
                 throw fourdberr(rc, m_db);
         }
 
+        unsigned getColCount()
+        {
+            return static_cast<unsigned>(sqlite3_column_count(m_stmt));
+        }
+
+        std::wstring getColName(unsigned idx)
+        {
+            return toWideStr(sqlite3_column_name(m_stmt, idx));
+        }
+
         std::wstring getString(unsigned idx)
         {
             return toWideStr(std::string((const char*)sqlite3_column_text(m_stmt, idx)));

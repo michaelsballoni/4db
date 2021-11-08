@@ -70,8 +70,7 @@ namespace fourdb
         {
             if (value.isStr())
             {
-                paramap params;
-                params.insert(L"@stringValue", value);
+                paramap params{ { L"@stringValue", value } };
                 std::wstring selectSql =
                     L"SELECT id FROM bvalues WHERE isNumeric = 0 AND stringValue = @stringValue";
                 int64_t id = db.execScalarInt64(selectSql, params).value_or(-1);
@@ -79,8 +78,7 @@ namespace fourdb
             }
             else
             {
-                paramap params;
-                params.insert(L"@numberValue", value);
+                paramap params{ { L"@numberValue", value } };
                 std::wstring selectSql =
                     L"SELECT id FROM bvalues WHERE isNumeric = 1 AND numberValue = @numberValue";
                 int64_t id = db.execScalarInt64(selectSql, params).value_or(-1);
@@ -92,13 +90,12 @@ namespace fourdb
         {
             if (value.isStr())
             {
-                paramap params;
-                params.insert(L"@stringValue", value);
+                paramap params{ { L"@stringValue", value } };
                 std::wstring insertSql =
                     L"INSERT INTO bvalues (isNumeric, numberValue, stringValue) VALUES (0, 0.0, @stringValue)";
                 int64_t id = db.execInsert(insertSql, params);
                 
-                params.insert(L"@id", static_cast<double>(id));
+                params.insert({ L"@id", static_cast<double>(id) });
                 std::wstring textInsertSearchSql =
                     L"INSERT INTO bvaluetext (valueid, stringSearchValue) VALUES (@id, @stringValue)";
                 db.execInsert(textInsertSearchSql, params);
@@ -107,8 +104,7 @@ namespace fourdb
             }
             else
             {
-                paramap params;
-                params.insert(L"@numberValue", value);
+                paramap params{ { L"@numberValue", value } };
                 std::wstring insertSql =
                     L"INSERT INTO bvalues (isNumeric, numberValue, stringValue) VALUES (1, @numberValue, '')";
                 int64_t id = db.execInsert(insertSql, params);

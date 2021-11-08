@@ -75,7 +75,7 @@ namespace fourdb
 
         select& addParam(const std::wstring& name, const strnum& value)
         {
-            cmdParams.insert(name, value);
+            cmdParams.insert({ name, value });
             return *this;
         }
 

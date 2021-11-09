@@ -4,6 +4,10 @@
 
 namespace fourdb
 {
+    /// <summary>
+    /// A strnum is either a wstring or a double
+    /// Poor man's variant, it maps directly onto the virtual schema
+    /// </summary>
     class strnum
     {
     public:
@@ -27,13 +31,15 @@ namespace fourdb
 
         const std::wstring& str() const
         {
-            assert(m_isStr);
+            if (!m_isStr)
+                throw std::runtime_error("not a string");
             return m_str;
         }
 
         double num() const
         {
-            assert(!m_isStr);
+            if (m_isStr)
+                throw std::runtime_error("not a number");
             return m_num;
         }
 

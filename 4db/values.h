@@ -6,10 +6,6 @@ namespace fourdb
 {
     /// <summary>
     /// implemetation for tracking the row data in virtual tables
-    /// Values can either be strings or floating-point numbers
-    /// This class takes the form of Names and Tables, where you take what you know, in this case a value,
-    /// and you get back what you want, the ID of the value's row in the bvalues MySQL table,
-    /// or you have a MySQL table row ID, and you want to the value back out
     /// </summary>
     class values
     {
@@ -36,26 +32,12 @@ namespace fourdb
             return sql;
         }
 
-        /// <summary>
-        /// Return this to the factory original
-        /// </summary>
-        /// <param name="ctxt">Object for interacting with the database</param>
         static void reset(db& db)
         {
             db.execSql(L"DELETE FROM bvalues");
             db.execSql(L"DELETE FROM bvaluetext");
         }
 
-        /// <summary>
-        /// Given a value, get the row ID in the MySQL bvalues table.
-        /// Note that there's caching 
-        /// </summary>
-        /// <param name="ctxt">Object for interacting with the database</param>
-        /// <param name="value">
-        /// Could be anything, but it's a either a string, or it better be convertible to a double
-        /// Note that row IDs are cached, but only for strings or for numbers that are essentially integral
-        /// </param>
-        /// <returns>row ID in MySQL table</returns>
         static int64_t getId(db& db, const strnum& value)
         {
             int64_t id = getIdSelect(db, value);
@@ -66,6 +48,23 @@ namespace fourdb
             return id;
         }
 
+        static strnum getValue(db& db, int64_t id)
+        {
+            std::wstring sql =
+                L"SELECT isNumeric, numberValue, stringValue FROM bvalues "
+                L"WHERE id = " + std::to_wstring(id);
+
+            auto reader = db.execReader(sql);
+            if (!reader->read())
+                throw fourdberr("values.getValue fails to find record with ID = " + std::to_string(id));
+            bool isNumeric = reader->getBoolean(0);
+            if (isNumeric)
+                return reader->getDouble(1);
+            else
+                return reader->getString(2);
+        }
+
+    private:
         static int64_t getIdSelect(db& db, const strnum& value)
         {
             if (value.isStr())
@@ -110,28 +109,6 @@ namespace fourdb
                 int64_t id = db.execInsert(insertSql, params);
                 return id;
             }
-        }
-
-        /// <summary>
-        /// Given a row ID in the MySQL bvalues table, get out the value
-        /// </summary>
-        /// <param name="ctxt">Object for interacting with the database</param>
-        /// <param name="id">row ID in the MySQL bvalues table</param>
-        /// <returns></returns>
-        static strnum getValue(db& db, int64_t id)
-        {
-            std::wstring sql = 
-                L"SELECT isNumeric, numberValue, stringValue FROM bvalues "
-                L"WHERE id = " + std::to_wstring(id);
-
-            auto reader = db.execReader(sql);
-            if (!reader->read())
-                throw fourdberr("values.getValue fails to find record with ID = " + std::to_string(id));
-            bool isNumeric = reader->getBoolean(0);
-            if (isNumeric)
-                return reader->getDouble(1);
-            else
-                return reader->getString(2);
         }
     };
 }

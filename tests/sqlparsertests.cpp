@@ -17,8 +17,8 @@ namespace fourdb
                 const char* testDbFilePath = "sqlparser_unit_tests.db";
                 if (std::filesystem::exists(testDbFilePath))
                     std::filesystem::remove(testDbFilePath);
-                ctxt context(testDbFilePath);
-                namevalues::clearCaches();
+                ctxt context(testDbFilePath, true);
+
                 {
                     auto select = sql::parse(L"SELECT foo, bar\nFROM bletmonkey");
                     Assert::AreEqual(toWideStr("foo, bar"), join<wchar_t>(select.selectCols, L", "));

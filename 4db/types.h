@@ -1,7 +1,5 @@
 #pragma once
 
-#include "includes.h"
-
 #include "db.h"
 #include "strnum.h"
 #include "vectormap.h"
@@ -90,5 +88,5 @@ namespace fourdb
     };
 
     // table name => column names, all kept in order
-    typedef vectormap<std::wstring, std::vector<std::wstring>> schemaresponse;
+    typedef vectormap<std::wstring, std::shared_ptr<std::vector<std::wstring>>> virtualschema;
 }

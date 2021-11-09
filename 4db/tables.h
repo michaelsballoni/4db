@@ -4,13 +4,6 @@
 
 namespace fourdb
 {
-    struct table_obj
-    {
-        int id = -1;
-        std::wstring name;
-        bool isNumeric = false;
-    };
-
     /// <summary>
     /// implementation class for the tables in the virtual schema
     /// </summary>
@@ -31,25 +24,12 @@ namespace fourdb
             return sql;
         }
 
-        /// <summary>
-        /// Remove all tables from the database
-        /// </summary>
-        /// <param name="db">Database connection</param>
         static void reset(db& db)
         {
             db.execSql(L"DELETE FROM tables");
             clearCaches();
         }
 
-        /// <summary>
-        /// Given a table name, get the row ID for the table
-        /// </summary>
-        /// <param name="ctxt">Database connection</param>
-        /// <param name="name">Table name</param>
-        /// <param name="isNumeric">Is the table's primary key numeric or string</param>
-        /// <param name="noCreate">Should an exception be thrown if no table found</param>
-        /// <param name="noException">Should -1 be returned instead of throwing an exception if the table is not found</param>
-        /// <returns>Database row ID for the table</returns>
         static int getId(db& db, std::wstring name, bool isNumeric = false, bool noCreate = false, bool noException = false)
         {
             std::lock_guard<std::mutex> lock(getMutex());
@@ -83,12 +63,13 @@ namespace fourdb
             return id;
         }
 
-        /// <summary>
-        /// Get info about the table found by looking up the row ID
-        /// </summary>
-        /// <param name="ctxt">Database connection</param>
-        /// <param name="id">Table database row ID</param>
-        /// <returns></returns>
+        struct table_obj
+        {
+            int id = -1;
+            std::wstring name;
+            bool isNumeric = false;
+        };
+
         static std::optional<table_obj> getTable(db& db, int id)
         {
             std::lock_guard<std::mutex> lock(getMutex());

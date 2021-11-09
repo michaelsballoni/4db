@@ -4,9 +4,13 @@
 
 namespace fourdb
 {
+    /// <summary>
+    /// dbreader implements processing database query results 
+    /// </summary>
     class dbreader
     {
     public:
+        // Called by db, not meant to be called elsewhere
         dbreader(sqlite3* db, const std::wstring& sql)
             : m_db(db)
             , m_stmt(nullptr)
@@ -69,7 +73,7 @@ namespace fourdb
             case SQLITE_BLOB:
                 return L"blob";
             default:
-                return L"Unknown column type: " + std::to_wstring(columnType);
+                throw fourdberr("Unknown column type: " + std::to_string(columnType));
             }
         }
 

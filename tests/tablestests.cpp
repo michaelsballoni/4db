@@ -17,8 +17,7 @@ namespace fourdb
 				const char* testDbFilePath = "tables_unit_tests.db";
 				if (std::filesystem::exists(testDbFilePath))
 					std::filesystem::remove(testDbFilePath);
-				ctxt context(testDbFilePath);
-				namevalues::clearCaches();
+				ctxt context(testDbFilePath, true);
 
 				tables::reset(context.db());
 

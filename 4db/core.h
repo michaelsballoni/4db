@@ -1,3 +1,4 @@
+// Utility functions used throughout the class library and unit tests.
 #pragma once
 
 #include "includes.h"

@@ -35,26 +35,12 @@ namespace fourdb
             return sql;
         }
         
-        /// <summary>
-        /// Remove all names rows from the database
-        /// </summary>
-        /// <param name="ctxt">Database connection</param>
         static void reset(db& db)
         {
             db.execSql(L"DELETE FROM names");
             clearCaches();
         }
 
-        /// <summary>
-        /// Given a column name and value, get back the row ID
-        /// </summary>
-        /// <param name="db">Database connection</param>
-        /// <param name="tableId">What table does this row go into?</param>
-        /// <param name="name">What is the column name?</param>
-        /// <param name="isNumeric">Is this column numeric or string?</param>
-        /// <param name="noCreate">Should the command fail if no existing table matches?</param>
-        /// <param name="noException">Should -1 be returned on error instead of raising exception?</param>
-        /// <returns></returns>
         static int getId(db& db, int tableId, std::wstring name, bool isNumeric = false, bool noCreate = false, bool noException = false)
         {
             std::lock_guard<std::mutex> lock(getMutex());
@@ -100,12 +86,6 @@ namespace fourdb
             return id;
         }
 
-        /// <summary>
-        /// Given a name ID, get info about the name
-        /// </summary>
-        /// <param name="db">Database connection</param>
-        /// <param name="id">Name database row ID</param>
-        /// <returns>Info about the name</returns>
         static name_obj getName(db& db, int id)
         {
             std::lock_guard<std::mutex> lock(getMutex());
@@ -130,12 +110,6 @@ namespace fourdb
             return retVal;
         }
 
-        /// <summary>
-        /// Given a name ID, see if it's numeric
-        /// </summary>
-        /// <param name="db">Database connection</param>
-        /// <param name="id">Name database row ID</param>
-        /// <returns>true if the name is numeric</returns>
         static bool getNameIsNumeric(db& db, int id)
         {
             std::lock_guard<std::mutex> lock(getMutex());

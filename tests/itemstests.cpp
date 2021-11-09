@@ -17,8 +17,7 @@ namespace fourdb
                 const char* testDbFilePath = "items_unit_tests.db";
                 if (std::filesystem::exists(testDbFilePath))
                     std::filesystem::remove(testDbFilePath);
-                ctxt context(testDbFilePath);
-                namevalues::clearCaches();
+                ctxt context(testDbFilePath, true);
 
                 items::reset(context.db());
 
@@ -45,8 +44,7 @@ namespace fourdb
                 const char* testDbFilePath = "items_unit_tests.db";
                 if (std::filesystem::exists(testDbFilePath))
                     std::filesystem::remove(testDbFilePath);
-                ctxt context(testDbFilePath);
-                namevalues::clearCaches();
+                ctxt context(testDbFilePath, true);
 
                 items::reset(context.db());
 

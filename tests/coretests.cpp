@@ -60,11 +60,11 @@ namespace fourdb
 			Assert::AreEqual(size_t(2), map.vec().size());
 			Assert::AreEqual(size_t(2), map.map().size());
 
-			Assert::AreEqual(0, map.vec()[0].key);
-			Assert::AreEqual(std::string("foo"), map.vec()[0].value);
+			Assert::AreEqual(0, map.vec()[0].first);
+			Assert::AreEqual(std::string("foo"), map.vec()[0].second);
 
-			Assert::AreEqual(1, map.vec()[1].key);
-			Assert::AreEqual(std::string("bar"), map.vec()[1].value);
+			Assert::AreEqual(1, map.vec()[1].first);
+			Assert::AreEqual(std::string("bar"), map.vec()[1].second);
 
 			Assert::IsTrue(map.map().find(0) != map.map().end());
 			Assert::AreEqual(std::string("foo"), map.map().find(0)->second);

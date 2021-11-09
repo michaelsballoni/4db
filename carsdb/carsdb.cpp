@@ -49,7 +49,7 @@ int main()
     // and use context.execQuery function to execute the query,
     // handing back an object to process the results.
     printf("Getting cars...\n");
-    std::vector<strnum> oldCarGuids;
+    std::vector<strnum> oldCarKeys;
     auto select =
         sql::parse
         (
@@ -63,7 +63,7 @@ int main()
     while (reader->read())
     {
         // Collect the primary key ("value") that addCar added
-        oldCarGuids.emplace_back(reader->getString(0));
+        oldCarKeys.emplace_back(reader->getString(0));
 
         // 4db values are either numbers (doubles) or strings
         printf("%d: %S - %S\n", 
@@ -74,7 +74,7 @@ int main()
 
     // We use the list of primary keys to delete some rows.
     printf("Deleting old cars...\n");
-    context.deleteRows(L"cars", oldCarGuids);
+    context.deleteRows(L"cars", oldCarKeys);
 
     printf("All done.\n");
     return 0;

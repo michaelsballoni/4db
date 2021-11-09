@@ -5,7 +5,7 @@
 namespace fourdb
 {
     /// <summary>
-    /// Items are the rows in the metastrings schema
+    /// implementation class for the rows in the virtual schema
     /// </summary>
     class items
     {
@@ -54,22 +54,11 @@ namespace fourdb
             return sql;
         }
 
-        /// <summary>
-        /// Remove all rows from the items table
-        /// </summary>
         static void reset(db& db)
         {
             db.execSql(L"DELETE FROM items");
         }
 
-        /// <summary>
-        /// Given a table and value, find the item
-        /// </summary>
-        /// <param name="ctxt">Database connection</param>
-        /// <param name="tableId">The table ID</param>
-        /// <param name="valueId">The value ID of the primary key</param>
-        /// <param name="noCreate">Whether to return -1 on error</param>
-        /// <returns></returns>
         static int64_t getId(db& db, int tableId, int64_t valueId, bool noCreate = false)
         {
             paramap params
@@ -98,12 +87,6 @@ namespace fourdb
             }
         }
 
-        /// <summary>
-        /// Given an item ID, get the name=>value metadata for the item
-        /// </summary>
-        /// <param name="ctxt">Database connection</param>
-        /// <param name="itemId">The item to get metadat for</param>
-        /// <returns></returns>
         static std::unordered_map<int, int64_t> getItemData(db& db, int64_t itemId)
         {
             std::unordered_map<int, int64_t> retVal;
@@ -114,12 +97,6 @@ namespace fourdb
             return retVal;
         }
 
-        /// <summary>
-        /// Given an item put name=>value metadata into the database
-        /// </summary>
-        /// <param name="db">Database connection</param>
-        /// <param name="itemId">The item to add metadata to</param>
-        /// <param name="itemData">The name ID => value ID metadata</param>
         static void setItemData(db& db, int64_t itemId, const std::unordered_map<int, int64_t>& metadata)
         {
             std::wstring updateSql = 
@@ -146,12 +123,6 @@ namespace fourdb
             }
         }
 
-        /// <summary>
-        /// Given an item remove name metadata from the database
-        /// </summary>
-        /// <param name="db">Database connection</param>
-        /// <param name="itemId">The item to add metadata to</param>
-        /// <param name="nameId">The name ID of the metadata to remove from the item</param>
         static void removeItemData(db& db, int64_t itemId, int nameId)
         {
             std::wstring updateSql =
@@ -167,11 +138,6 @@ namespace fourdb
             db.execSql(sql, params);
         }
 
-        /// <summary>
-        /// Delete an item
-        /// </summary>
-        /// <param name="db">Database connection</param>
-        /// <param name="itemId">The item to delete</param>
         static void deleteItem(db& db, int64_t itemId)
         {
             db.execSql(L"DELETE FROM items WHERE id = " + std::to_wstring(itemId));

@@ -1,7 +1,7 @@
 // Include this file in your PCH, you'll sleep better at night...
 #pragma once
 
-#include "sqlite3.h"
+#include "../../sqlite/sqlite3.h"
 
 #include <assert.h>
 

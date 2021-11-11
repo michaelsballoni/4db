@@ -6,101 +6,30 @@ namespace fourdb
 {
     /// <summary>
     /// dbreader implements processing database query results 
+    /// not meant to be created outside of this project
     /// </summary>
     class dbreader
     {
     public:
         // Called by db, not meant to be called elsewhere
-        dbreader(sqlite3* db, const std::wstring& sql)
-            : m_db(db)
-            , m_stmt(nullptr)
-            , m_doneReading(false)
-        {
-            int rc = sqlite3_prepare_v3(m_db, toNarrowStr(sql).c_str(), sql.size() * 4, 0, &m_stmt, nullptr);
-            if (rc != SQLITE_OK)
-                throw fourdberr(rc, db);
-        }
+        dbreader(sqlite3* db, const std::wstring& sql);
+        ~dbreader();
 
-        ~dbreader()
-        {
-            sqlite3_finalize(m_stmt);
-        }
+        bool read();
 
-        bool read()
-        {
-            if (m_doneReading)
-                return false;
+        unsigned getColCount();
+        std::wstring getColName(unsigned idx);
 
-            int rc = sqlite3_step(m_stmt);
-            if (rc == SQLITE_ROW)
-            {
-                return true;
-            }
-            else if (rc == SQLITE_DONE)
-            {
-                m_doneReading = true;
-                return false;
-            }
-            else
-                throw fourdberr(rc, m_db);
-        }
-
-        unsigned getColCount()
-        {
-            return static_cast<unsigned>(sqlite3_column_count(m_stmt));
-        }
-
-        std::wstring getColName(unsigned idx)
-        {
-            return toWideStr(sqlite3_column_name(m_stmt, idx));
-        }
-
-        std::wstring getString(unsigned idx)
-        {
-            auto str = sqlite3_column_text(m_stmt, idx);
-            if (str != nullptr)
-                return toWideStr(str);
-
-            int columnType = sqlite3_column_type(m_stmt, idx);
-            switch (columnType)
-            {
-            case SQLITE_INTEGER:
-                return std::to_wstring(sqlite3_column_int64(m_stmt, idx));
-            case SQLITE_FLOAT:
-                return std::to_wstring(sqlite3_column_double(m_stmt, idx));
-            case SQLITE_NULL:
-                return L"null";
-            case SQLITE_BLOB:
-                return L"blob";
-            default:
-                throw fourdberr("Unknown column type: " + std::to_string(columnType));
-            }
-        }
-
-        double getDouble(unsigned idx)
-        {
-            return sqlite3_column_double(m_stmt, idx);
-        }
-
-        int64_t getInt64(unsigned idx)
-        {
-            return sqlite3_column_int64(m_stmt, idx);
-        }
-
-        int getInt32(unsigned idx)
-        {
-            return sqlite3_column_int(m_stmt, idx);
-        }
-
-        bool getBoolean(unsigned idx)
-        {
-            return getInt32(idx) != 0;
-        }
-
-        bool isNull(unsigned idx)
-        {
-            return sqlite3_column_type(m_stmt, idx) == SQLITE_NULL;
-        }
+        std::wstring getString(unsigned idx); // best-effort string conversion
+        
+        double getDouble(unsigned idx);
+        
+        int64_t getInt64(unsigned idx);
+        int getInt32(unsigned idx);
+        
+        bool getBoolean(unsigned idx);
+        
+        bool isNull(unsigned idx);
 
     private:
         sqlite3* m_db;

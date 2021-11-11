@@ -53,7 +53,7 @@ namespace fourdb
             if (m_isStr)
             {
                 std::wstring retVal = m_str; // replace modifies param in place
-                replace<std::wstring>(retVal, L"\'", L"\'\'");
+                replace(retVal, L"\'", L"\'\'");
                 retVal = L"'" + retVal + L"'";
                 return retVal;
             }

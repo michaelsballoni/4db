@@ -5,6 +5,8 @@
 #include <string>
 #include <iostream>
 
+#pragma comment(lib, "4db")
+
 using namespace fourdb;
 
 FILE* outputFile = nullptr;

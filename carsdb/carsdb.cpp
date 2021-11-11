@@ -10,6 +10,8 @@
 
 #include <stdio.h>
 
+#pragma comment(lib, "4db")
+
 using namespace fourdb;
 
 void addCar(ctxt& context, int year, std::wstring make, std::wstring model); // used by main()

@@ -2,6 +2,10 @@
 #include "CppUnitTest.h"
 
 #include "ctxt.h"
+#include "items.h"
+#include "names.h"
+#include "tables.h"
+#include "values.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 

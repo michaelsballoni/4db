@@ -15,13 +15,13 @@ namespace fourdb
 
 		TEST_METHOD(TestCore)
 		{
-			std::string str = "foobar";
-			replace<std::string>(str, "oo", "y");
-			Assert::AreEqual(std::string("fybar"), str);
+			std::wstring str = L"foobar";
+			replace(str, L"oo", L"y");
+			Assert::AreEqual(toWideStr("fybar"), str);
 
-			str = "some'thing' else";
-			replace<std::string>(str, "'", "''");
-			Assert::AreEqual(std::string("some''thing'' else"), str);
+			str = L"some'thing' else";
+			replace(str, L"'", L"''");
+			Assert::AreEqual(toWideStr("some''thing'' else"), str);
 
 			Assert::AreEqual(std::string("foobar"), toNarrowStr(L"foobar"));
 
@@ -32,10 +32,10 @@ namespace fourdb
 			Assert::IsTrue(!isWord(L"bletMonkey=="));
 			Assert::IsTrue(isWord(L"foo_bar-914"));
 
-			Assert::AreEqual(toWideStr(""), join<wchar_t>(std::vector<std::wstring>(), L"; "));
-			Assert::AreEqual(toWideStr("1"), join<wchar_t>(std::vector<std::wstring>{ L"1" }, L"; "));
-			Assert::AreEqual(toWideStr("1; 2"), join<wchar_t>(std::vector<std::wstring>{ L"1", L"2" }, L"; "));
-			Assert::AreEqual(toWideStr("1; 2; 3"), join<wchar_t>(std::vector<std::wstring>{ L"1", L"2", L"3" }, L"; "));
+			Assert::AreEqual(toWideStr(""), join(std::vector<std::wstring>(), L"; "));
+			Assert::AreEqual(toWideStr("1"), join(std::vector<std::wstring>{ L"1" }, L"; "));
+			Assert::AreEqual(toWideStr("1; 2"), join(std::vector<std::wstring>{ L"1", L"2" }, L"; "));
+			Assert::AreEqual(toWideStr("1; 2; 3"), join(std::vector<std::wstring>{ L"1", L"2", L"3" }, L"; "));
 		}
 
 		TEST_METHOD(TestStrnum)

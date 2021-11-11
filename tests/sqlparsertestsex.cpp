@@ -101,7 +101,7 @@ namespace fourdb
 
                 sql = L"SELECT foo, fred, blet FROM something";
                 select = sql::parse(sql);
-                Assert::AreEqual(toWideStr("foo|fred|blet"), join<wchar_t>(select.selectCols, L"|"));
+                Assert::AreEqual(toWideStr("foo|fred|blet"), join(select.selectCols, L"|"));
                 Assert::AreEqual(toWideStr("something"), select.from);
 
                 sql = L"SELECT foo, fred, blet FROM something WHERE";
@@ -131,7 +131,7 @@ namespace fourdb
 
                 sql = L"SELECT foo, fred, blet FROM something WHERE foo = @foo";
                 select = sql::parse(sql);
-                Assert::AreEqual(toWideStr("foo|fred|blet"), join<wchar_t>(select.selectCols, L"|"));
+                Assert::AreEqual(toWideStr("foo|fred|blet"), join(select.selectCols, L"|"));
                 Assert::AreEqual(toWideStr("something"), select.from);
                 criteria criteria1 = select.where[0].criterias[0];
                 Assert::AreEqual(toWideStr("foo"), criteria1.name);
@@ -173,7 +173,7 @@ namespace fourdb
 
                 sql = L"SELECT foo, fred, blet FROM something WHERE foo = @foo AND blet > @monkey";
                 select = sql::parse(sql);
-                Assert::AreEqual(toWideStr("foo|fred|blet"), join<wchar_t>(select.selectCols, L"|"));
+                Assert::AreEqual(toWideStr("foo|fred|blet"), join(select.selectCols, L"|"));
                 Assert::AreEqual(toWideStr("something"), select.from);
                 criteria1 = select.where[0].criterias[0];
                 criteria criteria2 = select.where[0].criterias[1];
@@ -187,7 +187,7 @@ namespace fourdb
                 sql = L"SELECT foo, fred, blet FROM something "
                       L"WHERE foo = @foo AND blet > @monkey AND amazing LIKE @greatness";
                 select = sql::parse(sql);
-                Assert::AreEqual(toWideStr("foo|fred|blet"), join<wchar_t>(select.selectCols, L"|"));
+                Assert::AreEqual(toWideStr("foo|fred|blet"), join(select.selectCols, L"|"));
                 Assert::AreEqual(toWideStr("something"), select.from);
                 criteria1 = select.where[0].criterias[0];
                 criteria2 = select.where[0].criterias[1];
@@ -248,7 +248,7 @@ namespace fourdb
 
                 sql = L"SELECT foo, fred, blet FROM something WHERE foo = @foo ORDER BY fred";
                 select = sql::parse(sql);
-                Assert::AreEqual(toWideStr("foo|fred|blet"), join<wchar_t>(select.selectCols, L"|"));
+                Assert::AreEqual(toWideStr("foo|fred|blet"), join(select.selectCols, L"|"));
                 Assert::AreEqual(toWideStr("something"), select.from);
                 criteria1 = select.where[0].criterias[0];
                 Assert::AreEqual(toWideStr("foo"), criteria1.name);
@@ -261,7 +261,7 @@ namespace fourdb
                 sql = L"SELECT foo, fred, blet FROM something WHERE foo = @foo "
                       L"ORDER BY fred, barney DESC";
                 select = sql::parse(sql);
-                Assert::AreEqual(toWideStr("foo|fred|blet"), join<wchar_t>(select.selectCols, L"|"));
+                Assert::AreEqual(toWideStr("foo|fred|blet"), join(select.selectCols, L"|"));
                 Assert::AreEqual(toWideStr("something"), select.from);
                 criteria1 = select.where[0].criterias[0];
                 Assert::AreEqual(toWideStr("foo"), criteria1.name);
@@ -276,7 +276,7 @@ namespace fourdb
                 sql = L"SELECT foo, fred, blet FROM something WHERE foo = @foo "
                       L"ORDER BY fred ASC, barney";
                 select = sql::parse(sql);
-                Assert::AreEqual(toWideStr("foo|fred|blet"), join<wchar_t>(select.selectCols, L"|"));
+                Assert::AreEqual(toWideStr("foo|fred|blet"), join(select.selectCols, L"|"));
                 Assert::AreEqual(toWideStr("something"), select.from);
                 criteria1 = select.where[0].criterias[0];
                 Assert::AreEqual(toWideStr("foo"), criteria1.name);
@@ -327,7 +327,7 @@ namespace fourdb
                       L"ORDER BY fred, barney DESC "
                       L"LIMIT 100";
                 select = sql::parse(sql);
-                Assert::AreEqual(toWideStr("foo|fred|blet"), join<wchar_t>(select.selectCols, L"|"));
+                Assert::AreEqual(toWideStr("foo|fred|blet"), join(select.selectCols, L"|"));
                 Assert::AreEqual(toWideStr("something"), select.from);
                 criteria1 = select.where[0].criterias[0];
                 Assert::AreEqual(toWideStr("foo"), criteria1.name);

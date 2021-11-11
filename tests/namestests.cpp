@@ -2,6 +2,10 @@
 #include "CppUnitTest.h"
 
 #include "ctxt.h"
+#include "items.h"
+#include "names.h"
+#include "tables.h"
+#include "values.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -30,7 +34,7 @@ namespace fourdb
 					int nameid = names::getId(context.db(), tableid, L"test-name", isNumeric);
 					Assert::IsTrue(nameid >= 0);
 
-					name_obj nameObj = names::getName(context.db(), nameid);
+					names::name_obj nameObj = names::getName(context.db(), nameid);
 					Assert::AreEqual(nameid, nameObj.id);
 					Assert::AreEqual(isNumeric, nameObj.isNumeric);
 					Assert::AreEqual(toWideStr("test-name"), nameObj.name);

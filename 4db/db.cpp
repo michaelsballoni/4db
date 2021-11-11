@@ -16,6 +16,7 @@ namespace fourdb
         if (m_db != nullptr)
         {
             int rc = sqlite3_close(m_db);
+            (void)rc; // release build
             assert(rc == SQLITE_OK);
         }
     }

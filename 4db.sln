@@ -20,6 +20,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "4dbq", "4dbq\4dbq.vcxproj",
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "4db", "4db\4db.vcxproj", "{262DC6DB-1B57-4A74-A467-F01454A3C19B}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "musicdb", "musicdb\musicdb.vcxproj", "{35F68B93-E331-43DB-9D83-096C57A36237}"
+	ProjectSection(ProjectDependencies) = postProject
+		{262DC6DB-1B57-4A74-A467-F01454A3C19B} = {262DC6DB-1B57-4A74-A467-F01454A3C19B}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -72,6 +77,16 @@ Global
 		{262DC6DB-1B57-4A74-A467-F01454A3C19B}.Release|x64.Build.0 = Release|x64
 		{262DC6DB-1B57-4A74-A467-F01454A3C19B}.Release|x86.ActiveCfg = Release|Win32
 		{262DC6DB-1B57-4A74-A467-F01454A3C19B}.Release|x86.Build.0 = Release|Win32
+		{35F68B93-E331-43DB-9D83-096C57A36237}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{35F68B93-E331-43DB-9D83-096C57A36237}.Debug|x64.ActiveCfg = Debug|x64
+		{35F68B93-E331-43DB-9D83-096C57A36237}.Debug|x64.Build.0 = Debug|x64
+		{35F68B93-E331-43DB-9D83-096C57A36237}.Debug|x86.ActiveCfg = Debug|Win32
+		{35F68B93-E331-43DB-9D83-096C57A36237}.Debug|x86.Build.0 = Debug|Win32
+		{35F68B93-E331-43DB-9D83-096C57A36237}.Release|Any CPU.ActiveCfg = Release|Win32
+		{35F68B93-E331-43DB-9D83-096C57A36237}.Release|x64.ActiveCfg = Release|x64
+		{35F68B93-E331-43DB-9D83-096C57A36237}.Release|x64.Build.0 = Release|x64
+		{35F68B93-E331-43DB-9D83-096C57A36237}.Release|x86.ActiveCfg = Release|Win32
+		{35F68B93-E331-43DB-9D83-096C57A36237}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

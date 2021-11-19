@@ -48,7 +48,7 @@ namespace fourdb
 
                     currentToken = tokens[idx];
 
-                    bool lastColumn = currentToken.back() != L',';
+                    bool lastColumn = currentToken.back() != ',';
                     if (!lastColumn)
                         currentToken = currentToken.substr(0, currentToken.length() - 1);
 
@@ -91,7 +91,7 @@ namespace fourdb
 
                 // Gobble up WHERE criteria
                 ++idx;
-                retVal.where.emplace_back();
+                retVal.where.emplace_back(); // gotta start somewhere
                 criteriaset& crits = retVal.where.back();
                 while ((idx + 3) <= tokens.size())
                 {
@@ -150,7 +150,7 @@ namespace fourdb
                 {
                     currentToken = tokens[idx];
 
-                    bool currentEnds = idx == tokens.size() - 1 || currentToken.back() == L',';
+                    bool currentEnds = idx == tokens.size() - 1 || currentToken.back() == ',';
 
                     nextToken = L"ASC";
                     if (!currentEnds)
@@ -159,16 +159,16 @@ namespace fourdb
                             nextToken = tokens[++idx];
                     }
 
-                    bool nextEnds = nextToken.back() == L',';
+                    bool nextEnds = nextToken.back() == ',';
 
                     bool isLimit = _wcsicmp(nextToken.c_str(), L"LIMIT") == 0;
 
                     bool lastColumn = isLimit || !(currentEnds || nextEnds);
 
-                    if (!currentToken.empty() && currentToken.back() == L',')
+                    if (!currentToken.empty() && currentToken.back() == ',')
                         currentToken = currentToken.substr(0, currentToken.length() - 1);
 
-                    if (!nextToken.empty() && nextToken.back() == L',')
+                    if (!nextToken.empty() && nextToken.back() == ',')
                         nextToken = nextToken.substr(0, nextToken.length() - 1);
 
                     bool isDescending;

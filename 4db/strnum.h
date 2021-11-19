@@ -59,7 +59,7 @@ namespace fourdb
             }
             else
             {
-                return std::to_wstring(m_num);
+                return num2str(m_num);
             }
         }
 

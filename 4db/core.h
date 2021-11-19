@@ -37,6 +37,8 @@ namespace fourdb
         return converter.from_bytes(reinterpret_cast<const char*>(bytes));
     }
 
+    std::wstring num2str(double num);
+
     bool isWord(const std::wstring& str);
 
     std::wstring toLower(const std::wstring& str);
@@ -64,11 +66,13 @@ namespace fourdb
 
     inline void validateParameterName(const std::wstring& name)
     {
-        if (name.empty() || name[0] != L'@' || !isWord(name.substr(1)))
+        if (name.empty() || name[0] != '@' || !isWord(name.substr(1)))
             throw fourdberr("Invalid parameter name: " + toNarrowStr(name));
     }
 
     std::wstring cleanseName(const std::wstring& name); // used for table and column aliases
 
     std::wstring join(const std::vector<std::wstring>& strs, const wchar_t* seperator);
+
+    std::vector<std::wstring> extractParamNames(const std::wstring& sql);
 }

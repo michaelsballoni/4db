@@ -8,7 +8,7 @@ namespace fourdb
         , m_stmt(nullptr)
         , m_doneReading(false)
     {
-        int rc = sqlite3_prepare_v3(m_db, toNarrowStr(sql).c_str(), sql.size() * 4, 0, &m_stmt, nullptr);
+        int rc = sqlite3_prepare_v3(m_db, toNarrowStr(sql).c_str(), -1, 0, &m_stmt, nullptr);
         if (rc != SQLITE_OK)
             throw fourdberr(rc, db);
     }
@@ -57,9 +57,9 @@ namespace fourdb
         switch (columnType)
         {
         case SQLITE_INTEGER:
-            return std::to_wstring(sqlite3_column_int64(m_stmt, idx));
+            return num2str(static_cast<double>(sqlite3_column_int64(m_stmt, idx)));
         case SQLITE_FLOAT:
-            return std::to_wstring(sqlite3_column_double(m_stmt, idx));
+            return num2str(sqlite3_column_double(m_stmt, idx));
         case SQLITE_NULL:
             return L"null";
         case SQLITE_BLOB:

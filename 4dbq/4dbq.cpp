@@ -22,51 +22,6 @@ void writeLine(const std::wstring& line)
     printf("%S\n", line.c_str());
 }
 
-std::vector<std::wstring> extractParamNames(const std::wstring& sql)
-{
-    std::vector<std::wstring> paramNames;
-    std::wstring sb;
-    int lookFrom = 0;
-    while (true)
-    {
-        if (static_cast<unsigned>(lookFrom) >= sql.length())
-            break;
-
-        int at = sql.find(L'@', lookFrom);
-        if (at == std::wstring::npos)
-            break;
-
-        sb.clear();
-        unsigned idx = static_cast<unsigned>(at + 1);
-        while (idx < sql.length())
-        {
-            auto c = sql[idx++];
-            if (iswalnum(c) || c == L'_')
-            {
-                sb += c;
-            }
-            else
-            {
-                break;
-            }
-        }
-
-        if (!sb.empty())
-        {
-            paramNames.push_back(L"@" + sb);
-            sb.clear();
-        }
-        lookFrom = idx;
-    }
-
-    if (!sb.empty())
-    {
-        paramNames.push_back(L"@" + sb);
-        sb.clear();
-    }
-    return paramNames;
-}
-
 int main(int argc, char* argv[])
 {
     try
@@ -158,7 +113,7 @@ int main(int argc, char* argv[])
                     ++resultCount;
                 }
 
-                writeLine(L"Results: " + std::to_wstring(resultCount));
+                writeLine(L"Results: " + fourdb::num2str(resultCount));
             }
             catch (const fourdberr& exp)
             {

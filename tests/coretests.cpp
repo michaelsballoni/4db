@@ -38,6 +38,49 @@ namespace fourdb
 			Assert::AreEqual(toWideStr("1; 2; 3"), join(std::vector<std::wstring>{ L"1", L"2", L"3" }, L"; "));
 		}
 
+		TEST_METHOD(TestExtractParams)
+		{
+			{
+				auto params = extractParamNames(L"");
+				Assert::IsTrue(params.empty());
+			}
+
+			{
+				auto params = extractParamNames(L"SELECT foo FROM bar");
+				Assert::IsTrue(params.empty());
+			}
+
+			{
+				auto params = extractParamNames(L"SELECT foo FROM bar WHERE blet = @");
+				Assert::IsTrue(params.empty());
+			}
+
+			{
+				auto params = extractParamNames(L"SELECT foo FROM bar WHERE blet = @m");
+				Assert::AreEqual(toWideStr("@m"), join(params, L", "));
+			}
+
+			{
+				auto params = extractParamNames(L"SELECT foo FROM bar WHERE blet = @mo");
+				Assert::AreEqual(toWideStr("@mo"), join(params, L", "));
+			}
+
+			{
+				auto params = extractParamNames(L"SELECT foo FROM bar WHERE blet = @monkey");
+				Assert::AreEqual(toWideStr("@monkey"), join(params, L", "));
+			}
+
+			{
+				auto params = extractParamNames(L"SELECT foo FROM bar WHERE blet = @monkey AND other = @monkey");
+				Assert::AreEqual(toWideStr("@monkey"), join(params, L", "));
+			}
+
+			{
+				auto params = extractParamNames(L"SELECT foo FROM bar WHERE blet = @monkey AND other = @else AND again = @monkey AND final = @end");
+				Assert::AreEqual(toWideStr("@monkey, @else, @end"), join(params, L", "));
+			}
+		}
+
 		TEST_METHOD(TestStrnum)
 		{
 			strnum numStr(9.14);

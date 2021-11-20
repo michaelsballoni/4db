@@ -116,6 +116,36 @@ namespace fourdb
         }
     }
 
+    std::vector<std::wstring> items::setItemDataSql(int64_t itemId, const std::unordered_map<int, int64_t>& metadata)
+    {
+        std::vector<std::wstring> retVal;
+        if (metadata.empty())
+            return retVal;
+
+        retVal.reserve(metadata.size() + 1);
+
+        std::wstring updateSql =
+            L"UPDATE items SET lastmodified = DATETIME('now') WHERE id = " + std::to_wstring(itemId);
+        retVal.push_back(updateSql);
+
+        std::wstring itemIdStr = num2str(static_cast<double>(itemId));
+
+        for (auto it : metadata)
+        {
+            std::wstring nameIdStr = num2str(static_cast<double>(it.first));
+            std::wstring valueId = num2str(static_cast<double>(it.second));
+
+            std::wstring sql =
+                L"INSERT INTO itemnamevalues (itemid, nameid, valueid) "
+                L"VALUES (" + itemIdStr + L", " + nameIdStr + L", " + valueId + L") "
+                L"ON CONFLICT(itemid, nameid) "
+                L"DO UPDATE SET valueid = " + valueId;
+            retVal.push_back(sql);
+        }
+
+        return retVal;
+    }
+
     void items::removeItemData(db& db, int64_t itemId, int nameId)
     {
         std::wstring updateSql =

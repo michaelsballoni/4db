@@ -96,6 +96,15 @@ namespace fourdb
         void define(const std::wstring& table, const strnum& key, const paramap& columnData);
 
         /// <summary>
+        /// UPSERT: Give it a table name, and a map from primary keys to column data, 
+        /// and it does the rest.  Use this define function for heavier import operations
+        /// </summary>
+        /// <param name="table">Name of the table to UPSERT into; table created automatically</param>
+        /// <param name="keysToColumnData">Primary keys -> Column data</param>
+        /// <param name="pacifier">Pass in a callback for progress notifications</param>
+        void define(const std::wstring& table, const std::unordered_map<strnum, paramap>& keysToColumnData, const std::function<void(const wchar_t*)>& pacifier);
+
+        /// <summary>
         /// Okay fine, there are 5 things you can do.  UNDEFINE.
         /// I didn't want to add a notion of a null strnum, either in strnum, or in paramap.
         /// And it's a strange thing to do, some sort of schema change.

@@ -18,6 +18,8 @@ namespace fourdb
         static std::unordered_map<int, int64_t> getItemData(db& db, int64_t itemId);
 
         static void setItemData(db& db, int64_t itemId, const std::unordered_map<int, int64_t>& metadata);
+        static std::vector<std::wstring> setItemDataSql(int64_t itemId, const std::unordered_map<int, int64_t>& metadata);
+        
         static void removeItemData(db& db, int64_t itemId, int nameId);
 
         static void deleteItem(db& db, int64_t itemId);

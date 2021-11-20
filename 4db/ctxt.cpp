@@ -105,25 +105,90 @@ namespace fourdb
 
     void ctxt::define(const std::wstring& table, const strnum& key, const paramap& columnData)
     {
-        bool isKeyNumeric = !key.isStr();
-        int tableId = tables::getId(*m_db, table, isKeyNumeric);
-        int64_t valueId = values::getId(*m_db, key);
-        int64_t itemId = items::getId(*m_db, tableId, valueId);
+        std::unordered_map<strnum, paramap> keysToColumnData{ { key, columnData} };
+        define(table, keysToColumnData, [](const wchar_t* str) { (void)str; });
+    }
 
-        std::unordered_map<int, int64_t> nameValueIds(columnData.size());
-        for (auto kvp : columnData)
+    void ctxt::define(const std::wstring& table, const std::unordered_map<strnum, paramap>& keysToColumnData, const std::function<void(const wchar_t*)>& pacifier)
+    {
+        if (keysToColumnData.empty())
+            return;
+
+        pacifier(L"Setting up shop");
+        std::vector<strnum> keys;
+        for (const auto& it : keysToColumnData)
+            keys.push_back(it.first);
+
+        strnum firstKey = keys[0];
+        bool firstIsString = firstKey.isStr();
+        for (const auto& key : keys)
         {
-            bool isMetadataNumeric = !kvp.second.isStr();
-
-            int nameId = names::getId(*m_db, tableId, kvp.first, isMetadataNumeric);
-            bool isNameNumeric = names::getNameIsNumeric(*m_db, nameId);
-
-            if (isMetadataNumeric != isNameNumeric)
-                throw fourdberr("Data numeric does not match name");
-
-            nameValueIds[nameId] = values::getId(*m_db, kvp.second);
+            if (key.isStr() != firstIsString)
+                throw fourdberr("Not all primary keys are of the same data type, string or number");
         }
-        items::setItemData(*m_db, itemId, nameValueIds);
+
+        pacifier(L"Seeding database");
+        bool isKeyNumeric = !firstIsString;
+        int tableId = tables::getId(*m_db, table, isKeyNumeric);
+        std::unordered_map<std::wstring, int64_t> valueIdCache;
+        std::vector<std::wstring> allSqlStatements;
+        for (const auto& keyToColumnData : keysToColumnData)
+        {
+            const strnum& key = keyToColumnData.first;
+            const paramap& columnData = keyToColumnData.second;
+
+            int64_t tableValueId = values::getId(*m_db, key); // no need to cache, all unique
+            int64_t itemId = items::getId(*m_db, tableId, tableValueId);
+            if (columnData.empty())
+                continue;
+
+            std::unordered_map<int, int64_t> nameValueIds;
+            for (const auto& nameValue : columnData)
+            {
+                const std::wstring& name = nameValue.first;
+                const strnum& value = nameValue.second;
+
+                bool isMetadataNumeric = !value.isStr();
+
+                int nameId = names::getId(*m_db, tableId, name, isMetadataNumeric);
+                bool isNameNumeric = names::getNameIsNumeric(*m_db, nameId);
+
+                if (isMetadataNumeric != isNameNumeric)
+                    throw fourdberr("Data numeric does not match name");
+
+                int64_t valueId = -1;
+                {
+                    std::wstring cacheKey =
+                        value.isStr() ? (L"$" + value.str()) : (L"#" + num2str(value.num()));
+                    const auto& cacheIt = valueIdCache.find(cacheKey);
+                    if (cacheIt == valueIdCache.end())
+                    {
+                        valueId = values::getId(*m_db, value);
+                        valueIdCache.insert({ cacheKey, valueId });
+                    }
+                    else
+                        valueId = cacheIt->second;
+                }
+                nameValueIds[nameId] = valueId;
+            }
+
+            auto sqlStatements = items::setItemDataSql(itemId, nameValueIds);
+            allSqlStatements.insert(allSqlStatements.end(), sqlStatements.begin(), sqlStatements.end());
+        }
+
+        pacifier(L"Populating database");
+        try
+        {
+            m_db->execSql(L"BEGIN");
+            for (const auto& sql : allSqlStatements)
+                m_db->execSql(sql);
+            m_db->execSql(L"COMMIT");
+        }
+        catch (...)
+        {
+            m_db->execSql(L"ROLLBACK");
+            throw;
+        }
     }
 
     void ctxt::undefine(const std::wstring& table, const strnum& key, const std::wstring& name)

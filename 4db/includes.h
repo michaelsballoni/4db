@@ -7,6 +7,7 @@
 
 #include <codecvt>
 #include <filesystem>
+#include <functional>
 #include <locale> 
 #include <memory>
 #include <mutex>

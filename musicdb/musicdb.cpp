@@ -46,12 +46,13 @@ void load(const std::string& xmlFilePath, fourdb::ctxt& context)
 
     xmlFileStream.imbue(std::locale(std::locale::empty(), new std::codecvt_utf8<wchar_t>));
 
-    context.drop(L"tracks");
+    context.drop(L"tracks"); // start fresh
 
     bool inDict = false;
+    std::unordered_map<fourdb::strnum, fourdb::paramap> dicts;
     fourdb::paramap dict;
     int addedCount = 0;
-    printf("Loading data from input file...\n");
+    printf("\nLoading data from input file...\n");
     while (xmlFileStream)
     {
         std::wstring line;
@@ -68,6 +69,8 @@ void load(const std::string& xmlFilePath, fourdb::ctxt& context)
         else if (_wcsicmp(tag, L"</dict>") == 0)
         {
             inDict = false;
+            if (dict.size() == 1)
+                continue;
 
             std::wstring key; // just needs to be unique
             for (const auto& kvp : dict)
@@ -80,11 +83,8 @@ void load(const std::string& xmlFilePath, fourdb::ctxt& context)
                 key += '|';
             }
 
-            context.define(L"tracks", key, dict);
-
+            dicts.insert({ key, dict });
             ++addedCount;
-            if ((addedCount % 100) == 0)
-                printf("%d ", addedCount);
         }
         else if (inDict && wcsncmp(tag, L"<key>", 5) == 0)
         {
@@ -160,6 +160,7 @@ void load(const std::string& xmlFilePath, fourdb::ctxt& context)
         }
     }
 
+    context.define(L"tracks", dicts, [](const wchar_t* msg) { printf("%S...\n", msg); });
     printf("\nRecords added: %d\n", addedCount);
 }
 
@@ -177,11 +178,15 @@ int main(int argc, char* argv[])
     const char* xmlFilePath = argv[1];
     printf("Input file: %s\n", xmlFilePath);
 
+    printf("\n");
+
     int64_t count = context.execScalarInt64(fourdb::sql::parse(L"SELECT count FROM tracks")).value_or(0);
     if (count <= 0)
         load(xmlFilePath, context);
     else
         printf("Records in DB: %d\n", static_cast<int>(count));
+
+    printf("\n");
 
     printf("Database Fields:\n");
     std::vector<std::wstring> sortedFieldNames;
@@ -189,7 +194,8 @@ int main(int argc, char* argv[])
         sortedFieldNames.push_back(fieldNameIt.second);
     std::sort(sortedFieldNames.begin(), sortedFieldNames.end());
     for (const auto& fieldName : sortedFieldNames)
-        printf("%S\n", fieldName.c_str());
+        printf("%S ", fieldName.c_str());
+    printf("\n");
     printf("\n");
 
     printf("Enter \"load\" or \"reload\" to rebuild the DB from the input file\n");
@@ -199,6 +205,7 @@ int main(int argc, char* argv[])
     {
         try
         {
+            printf("\n");
             printf("> ");
             std::wstring line;
             std::getline(std::wcin, line);
@@ -252,9 +259,13 @@ int main(int argc, char* argv[])
                 matrix.push_back(newRow);
             }
 
+            printf("\n");
+
             printf("Results: %u\n", static_cast<unsigned>(matrix.size()));
             if (matrix.empty())
                 continue;
+
+            printf("\n");
 
             std::vector<std::wstring> headerRow;
             for (unsigned col = 0; col < colCount; ++col)

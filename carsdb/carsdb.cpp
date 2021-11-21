@@ -7,15 +7,12 @@
 /// 4. DROP
 /// </summary>
 #include "ctxt.h"
+#pragma comment(lib, "4db")
 
 #include <stdio.h>
 
-#pragma comment(lib, "4db")
-
-using namespace fourdb;
-
 // used by main()
-void addCar(ctxt& context, int year, const std::wstring& make, const std::wstring& model);
+void addCar(fourdb::ctxt& context, int year, const std::wstring& make, const std::wstring& model);
 
 int main()
 {
@@ -28,7 +25,7 @@ int main()
     // There are many classes in 4db, but ctxt is the one you deal directly with;
     // you can auto the rest as seen here.
     printf("Opening database...\n");
-    ctxt context("cars.db");
+    fourdb::ctxt context("cars.db");
 
     // Drop our database table to start things clean.
     printf("Starting up...\n");
@@ -49,9 +46,9 @@ int main()
     // and use ctxt::execQuery function to execute the query,
     // handing back a reader object to process the results.
     printf("Getting cars...\n");
-    std::vector<strnum> oldCarKeys;
+    std::vector<fourdb::strnum> oldCarKeys;
     auto select =
-        sql::parse
+        fourdb::sql::parse
         (
             L"SELECT value, year, make, model "
             L"FROM cars "
@@ -94,11 +91,11 @@ int main()
 /// <param name="year">year of the car</param>
 /// <param name="make">make of the car</param>
 /// <param name="model">model of the car</param>
-void addCar(ctxt& context, int year, const std::wstring& make, const std::wstring& model)
+void addCar(fourdb::ctxt& context, int year, const std::wstring& make, const std::wstring& model)
 {
     std::wstring tableName = L"cars";
-    strnum primaryKey = fourdb::num2str(year) + L"_" + make + L"_" + model;
-    paramap columnData
+    fourdb::strnum primaryKey = fourdb::num2str(year) + L"_" + make + L"_" + model;
+    fourdb::paramap columnData
     {
         { L"year", year },
         { L"make", make },

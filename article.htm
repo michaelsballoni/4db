@@ -43,15 +43,15 @@ CODE { COLOR: #990000; FONT-FAMILY: "Courier New", Courier, mono; }
 <pre>
 Title:       4db: A dynamic file-based NoSQL database for C++
 Description: Wanna add basic database functionality to your C++ app?  Too lazy to use SQLite directly?  Read on!
-Abstract:    4db provides a simple, easy-to-use database engine for C++ projects.
+Abstract:    4db provides a simple, easy-to-use NoSQL database engine for C++ projects.
              Based on SQLite, 4db is file-based and portable.
              It provides the common things you do with SQL-type data in a simple API.
-             If you want to add basic data persistence to your project, look no further than 4db.
+             If you want to add basic database functionality to your C++ project, look no further than 4db.
 
 Author:      Michael Sydney Balloni
 Email:       balloni.michael@yahoo.com
 
-Language:    C++
+Language:    C++, SQL
 Platform:    Portable, multi-platform
 Technology:  SQLite
 Topic:       Databases
@@ -84,49 +84,417 @@ License:     Apache 2.0
     4db draws its roots from various things called metastrings over the years.
 </p>
 <p>
-    metastrings has been many things, and is survived in .NET by 4db.net,
-    which you can get on NuGet...but 4db is a new C++ port.
-    It is modern, clean, and portable, and built on the SQLite C API.
+    metastrings is survived in .NET by 4db.net in GitHub, 
+	but 4db is a new C++ port.
+    It is modern, clean, and portable, and built directly on the SQLite C API.
+    It should serve C++ developers in need of a simple file-based database well.
 </p>
 
 <h2>Interface</h2>
 <p>
-    Interacting with 4db is best demonstrated with an annotated sample program...
+    Using 4db is best demonstrated with an annotated sample program:
 </p>
-<pre>
-// FORNOW - Cars sample
-</pre>
+<pre>/// &lt;summary&gt;
+/// This program demonstrates creating a 4db database and using all four supported commands
+/// to populate, access, and manipulate the data.
+/// 1. UPSERT
+/// 2. SELECT
+/// 3. DELETE
+/// 4. DROP
+/// &lt;/summary&gt;
+#include "ctxt.h"
+#pragma comment(lib, "4db")
+
+#include &lt;stdio.h&gt;
+
+// used by main()
+void addCar(fourdb::ctxt& context, int year, const std::wstring& make, const std::wstring& model);
+
+int main()
+{
+    // 4db is built on SQLite, so to create a 4db database
+    // we simply need to specify the location of the database file.
+    // If the file does not exist, an empty database is automatically created.
+    // The ctxt class manages the database connection,
+    // provides many useful functions for executing SELECT queries,
+    // and implements the UPSERT, DELETE, and DROP functions.
+    // There are many classes in 4db, but ctxt is the one you deal directly with;
+    // you can auto the rest as seen here.
+    printf("Opening database...\n");
+    fourdb::ctxt context("cars.db");
+
+    // Drop our database table to start things clean.
+    printf("Starting up...\n");
+    context.drop(L"cars");
+
+    // Pass our context into addCar to add database records...so many cars...
+    printf("Adding cars to database...\n");
+    addCar(context, 1987, L"Nissan", L"Pathfinder");
+    addCar(context, 1998, L"Toyota", L"Tacoma");
+    addCar(context, 2001, L"Nissan", L"Xterra");
+    //...
+
+    // Select data out of the database using a basic dialect of SQL.
+    // Here we gather the "value" pseudo-column which 
+    // is the primary key added by the addCar function.
+    // We create a query object with our SELECT query,
+    // pass in the value for the @year parameter,
+    // and use ctxt::execQuery function to execute the query,
+    // handing back a reader object to process the results.
+    printf("Getting cars...\n");
+    std::vector&lt;fourdb::strnum&gt; oldCarKeys;
+    auto select =
+        fourdb::sql::parse
+        (
+            L"SELECT value, year, make, model "
+            L"FROM cars "
+            L"WHERE year &lt; @year "
+            L"ORDER BY year ASC"
+        );
+    select.addParam(L"@year", 2000);
+    auto reader = context.execQuery(select);
+    while (reader-&gt;read())
+    {
+        // Collect the primary key ("value") that addCar added
+        oldCarKeys.push_back(reader-&gt;getString(0));
+
+        // 4db values are either numbers (doubles) or strings
+        printf("%d: %S - %S\n", 
+               static_cast&lt;int&gt;(reader-&gt;getDouble(1)), 
+               reader-&gt;getString(2).c_str(),
+               reader-&gt;getString(3).c_str());
+    }
+
+    // We use the list of primary keys to delete some rows.
+    printf("Deleting old cars... (%u)\n", static_cast&lt;unsigned&gt;(oldCarKeys.size()));
+    context.deleteRows(L"cars", oldCarKeys);
+
+    printf("All done.\n");
+    return 0;
+}
+
+/// &lt;summary&gt;
+/// UPSERT a car into our database using the define function.
+/// You pass the table name, primary key value, and column data to this function.
+/// No need to explicitly create the table, just refer to it by name 
+/// and the define function takes care of it.
+/// NOTE: The primary key value and column data values
+///       can only be strings or numbers.
+///       For numbers, they have to be convertible to doubles,
+///       and are selected out of the database as doubles.
+/// &lt;/summary&gt;
+/// &lt;param name="context"&gt;ctxt for doing database work&lt;/param&gt;
+/// &lt;param name="year"&gt;year of the car&lt;/param&gt;
+/// &lt;param name="make"&gt;make of the car&lt;/param&gt;
+/// &lt;param name="model"&gt;model of the car&lt;/param&gt;
+void addCar(fourdb::ctxt& context, int year, const std::wstring& make, const std::wstring& model)
+{
+    std::wstring tableName = L"cars";
+    fourdb::strnum primaryKey = fourdb::num2str(year) + L"_" + make + L"_" + model;
+    fourdb::paramap columnData
+    {
+        { L"year", year },
+        { L"make", make },
+        { L"model", model },
+    };
+    context.define(tableName, primaryKey, columnData);
+}</pre>
 
 <h2>Implementation</h2>
 <p>
     The metastrings concept was always to present what looks like a rows-and-columns SQL interface
-    with an implementation in a "real" SQL database, only MySQL to start, and now only SQLite.
+    with an implementation in a "real" SQL database, initially only MySQL, now only SQLite.
 </p>
 <p>
-    The "virtual" schema's tables are pulled into separate real tables:
+    The "virtual" schema's tables are pulled into separate real tables in SQLite:
     <ul>
         <li>A registry of all tables in the virtual schema is stored in the real <u>tables</u>, um, table</li>
         <li>All columns in all tables are in the <u>names</u> table</li>
-        <li>Every unique value in the entire database - string or double - is stored in the <u>values</u> table</li>
+        <li>Every unique value in the entire database - wstring or double - is stored in the <u>values</u> table</li>
         <li>Each row in each virtual table is represented by a row in the real <u>items</u> table</li>
         <li>Everything is glued together by the <u>itemnamevalues</u> table, one row per data cell, itemid -> nameid -> valueid</li>
     </ul>
-    Tons of overhead here, it would never perform well.
-    But it's simple, and allows for a dynamic schema,
-    and there are tons of use cases where performance isn't a concern.
+    Tons of overhead, will probably never have high performance.
+    But it's simple, and allows for a dynamic schema.
+    And there are tons of use cases where high performance isn't a requirement.
     I see a bright future for this technology.
+</p>
+
+<h2>musicdb - A larger example</h2>
+<p>
+    iTunes, on Windows at least,
+    has a file describing the media library in an easily parsed XML file.
+    There is an entry in this file for each track in the library.
+    Each entry looks like this in the XML file:
+</p>
+<pre>&lt;dict&gt;
+	&lt;key&gt;Track ID&lt;/key&gt;&lt;integer&gt;1002&lt;/integer&gt;
+	&lt;key&gt;Size&lt;/key&gt;&lt;integer&gt;7973544&lt;/integer&gt;
+	&lt;key&gt;Total Time&lt;/key&gt;&lt;integer&gt;242755&lt;/integer&gt;
+	&lt;key&gt;Disc Number&lt;/key&gt;&lt;integer&gt;1&lt;/integer&gt;
+	&lt;key&gt;Disc Count&lt;/key&gt;&lt;integer&gt;1&lt;/integer&gt;
+	&lt;key&gt;Track Number&lt;/key&gt;&lt;integer&gt;1&lt;/integer&gt;
+	&lt;key&gt;Track Count&lt;/key&gt;&lt;integer&gt;13&lt;/integer&gt;
+	&lt;key&gt;Year&lt;/key&gt;&lt;integer&gt;2012&lt;/integer&gt;
+	&lt;key&gt;Date Modified&lt;/key&gt;&lt;date&gt;2016-08-22T01:35:10Z&lt;/date&gt;
+	&lt;key&gt;Date Added&lt;/key&gt;&lt;date&gt;2021-03-17T00:41:46Z&lt;/date&gt;
+	&lt;key&gt;Bit Rate&lt;/key&gt;&lt;integer&gt;256&lt;/integer&gt;
+	&lt;key&gt;Sample Rate&lt;/key&gt;&lt;integer&gt;44100&lt;/integer&gt;
+	&lt;key&gt;Artwork Count&lt;/key&gt;&lt;integer&gt;1&lt;/integer&gt;
+	&lt;key&gt;Persistent ID&lt;/key&gt;&lt;string&gt;A8CF63F61390C4BC&lt;/string&gt;
+	&lt;key&gt;Track Type&lt;/key&gt;&lt;string&gt;File&lt;/string&gt;
+	&lt;key&gt;File Folder Count&lt;/key&gt;&lt;integer&gt;5&lt;/integer&gt;
+	&lt;key&gt;Library Folder Count&lt;/key&gt;&lt;integer&gt;1&lt;/integer&gt;
+	&lt;key&gt;Name&lt;/key&gt;&lt;string&gt;Kryptonite&lt;/string&gt;
+	&lt;key&gt;Artist&lt;/key&gt;&lt;string&gt;3 Doors Down&lt;/string&gt;
+	&lt;key&gt;Album Artist&lt;/key&gt;&lt;string&gt;3 Doors Down&lt;/string&gt;
+	&lt;key&gt;Composer&lt;/key&gt;&lt;string&gt;Matt Roberts&lt;/string&gt;
+	&lt;key&gt;Album&lt;/key&gt;&lt;string&gt;The Greatest Hits [+digital booklet]&lt;/string&gt;
+	&lt;key&gt;Genre&lt;/key&gt;&lt;string&gt;Alternative Rock&lt;/string&gt;
+	&lt;key&gt;Kind&lt;/key&gt;&lt;string&gt;MPEG audio file&lt;/string&gt;
+	&lt;key&gt;Comments&lt;/key&gt;&lt;string&gt;Amazon.com Song ID: 233359329&lt;/string&gt;
+	&lt;key&gt;Sort Album&lt;/key&gt;&lt;string&gt;Greatest Hits [+digital booklet]&lt;/string&gt;
+	&lt;key&gt;Location&lt;/key&gt;&lt;string&gt;file://localhost/C:/Users/ballo/Music/iTunes/iTunes%20Media/Music/3%20Doors%20Down/The%20Greatest%20Hits%20%5B+digital%20booklet%5D/01-01-%20Kryptonite.mp3&lt;/string&gt;
+&lt;/dict&gt;</pre>
+<p>
+    The musicdb program parses the entire XML file and builds an in-memory representation of the library.
+    It makes a single 4db call to load that representation into the 4db database:
+</p>
+<pre>bool inDict = false;
+std::unordered_map&lt;fourdb::strnum, fourdb::paramap&gt; dicts; // accumalate info of all tracks
+fourdb::paramap dict; // info about the current track
+...
+while (xmlFileStream)
+{
+	std::wstring line;
+	std::getline(xmlFileStream, line);
+	const wchar_t* tag = wcsstr(line.c_str(), L"&lt;");
+	if (tag == nullptr)
+		continue;
+
+	if (_wcsicmp(tag, L"&lt;dict&gt;") == 0)
+	{
+		inDict = true;
+		dict.clear();
+	}
+	else if (_wcsicmp(tag, L"&lt;/dict&gt;") == 0)
+	{
+		inDict = false;
+		if (dict.size() == 1)
+			continue;
+
+		std::wstring key; // just needs to be unique
+		for (const auto& kvp : dict)
+		{
+			const auto& snum = kvp.second;
+			if (snum.isStr())
+				key += snum.str();
+			else
+				key += fourdb::num2str(snum.num());
+			key += '|';
+		}
+
+		dicts.insert({ key, dict });
+		++addedCount;
+	}
+	else if (inDict && wcsncmp(tag, L"&lt;key&gt;", 5) == 0) // metadata key line
+	{
+		const wchar_t* closingKey = wcsstr(tag, L"&lt;/key&gt;");
+		if (closingKey == nullptr)
+		{
+			printf("Unclosed &lt;key&gt;: %S\n", line.c_str());
+			continue;
+		}
+
+		std::wstring key(tag + 5, closingKey);
+		cleanXmlValue(key); // deal with &lt;, etc.
+
+		const auto& fieldNameIt = fieldNames.find(key); // look column name from iTunes field name
+		if (fieldNameIt == fieldNames.end())
+			continue; // not a field we care about
+		const auto& fieldName = fieldNameIt-&gt;second;
+
+		// It's either integer, string, or date
+		const wchar_t* valueTag = nullptr;
+
+		valueTag = wcsstr(closingKey, L"&lt;integer&gt;");
+		if (valueTag != nullptr)
+		{
+			const wchar_t* closingValue = wcsstr(tag, L"&lt;/integer&gt;");
+			if (closingValue == nullptr)
+			{
+	#ifdef _DEBUG
+				printf("Unclosed &lt;integer&gt;: %S\n", line.c_str());
+	#endif
+				continue;
+			}
+
+			std::wstring valueStr(valueTag + 9, closingValue);
+			double valueNum = _wtof(valueStr.c_str());
+			dict.insert({ fieldName, valueNum });
+			continue;
+		}
+
+		valueTag = wcsstr(closingKey, L"&lt;string&gt;");
+		if (valueTag != nullptr)
+		{
+			const wchar_t* closingValue = wcsstr(tag, L"&lt;/string&gt;");
+			if (closingValue == nullptr)
+			{
+	#ifdef _DEBUG
+				printf("Unclosed &lt;string&gt;: %S\n", line.c_str());
+	#endif
+				continue;
+			}
+
+			std::wstring valueStr(valueTag + 8, closingValue);
+			cleanXmlValue(valueStr);
+			dict.insert({ fieldName, valueStr });
+		}
+
+		valueTag = wcsstr(closingKey, L"&lt;date&gt;");
+		... // dates are treated like strings
+	}
+	...
+}
+
+// This one line loads the entire iTunes library into the 4db database "tracks" table
+// The lambda / printf business is for pacifying the user during the import process
+context.define(L"tracks", dicts, [](const wchar_t* msg) { printf("%S...\n", msg); });
+</pre>
+
+<p>
+    Once the 4db database is populated, 
+    you can query it using a basic dialect of SQL SELECT statements,
+    and get query results in a pleasant format:
+</p>
+
+<br clear=all>
+<img src=screenshot.png>
+<br clear=all>
+
+<pre>printf("&gt; ");
+std::wstring line;
+std::getline(std::wcin, line);
+...
+
+auto select = fourdb::sql::parse(line);
+auto paramNames = fourdb::extractParamNames(line);
+if (!paramNames.empty())
+{
+	printf("\n");
+	printf("Enter values for the parameters in your query;"
+		   " put # in front of numeric values:\n");
+	printf("\n");
+	for (const auto& paramName : paramNames)
+	{
+		printf("%S: ", paramName.c_str());
+		std::getline(std::wcin, line);
+		if (!line.empty() && line[0] == '#')
+			select.addParam(paramName, _wtof(line.substr(1).c_str()));
+		else
+			select.addParam(paramName, line);
+	}
+}
+
+auto reader = context.execQuery(select);
+auto colCount = reader-&gt;getColCount();
+
+std::vector&lt;std::vector&lt;std::wstring&gt;&gt; matrix;
+std::unordered_set&lt;std::wstring&gt; seenRowSummaries;
+
+while (reader-&gt;read())
+{
+	std::vector&lt;std::wstring&gt; newRow;
+	for (unsigned col = 0; col &lt; colCount; ++col)
+		newRow.push_back(reader-&gt;getString(col)); // getString works with all column types
+
+	std::wstring newRowSummary = fourdb::join(newRow, L"\v");
+	if (seenRowSummaries.find(newRowSummary) != seenRowSummaries.end())
+		continue;
+
+	seenRowSummaries.insert(newRowSummary);
+	matrix.push_back(newRow);
+}
+
+printf("\n");
+
+printf("Results: %u\n", static_cast&lt;unsigned&gt;(matrix.size()));
+if (matrix.empty())
+	continue;
+
+printf("\n");
+
+std::vector&lt;std::wstring&gt; headerRow;
+for (unsigned col = 0; col &lt; colCount; ++col)
+	headerRow.push_back(reader-&gt;getColName(col));
+matrix.insert(matrix.begin(), headerRow);
+
+std::vector&lt;unsigned&gt; columnWidths;
+for (const auto& header : headerRow)
+	columnWidths.push_back(static_cast&lt;unsigned&gt;(header.size()));
+for (const auto& row : matrix)
+{
+	for (size_t cellidx = 0; cellidx &lt; columnWidths.size(); ++cellidx)
+		columnWidths[cellidx] = std::max(columnWidths[cellidx], row[cellidx].size());
+}
+
+for (size_t cellidx = 0; cellidx &lt; columnWidths.size(); ++cellidx)
+{
+	const auto& header = headerRow[cellidx];
+	auto headerWidth = columnWidths[cellidx];
+	printf("%S", header.c_str());
+	for (size_t s = header.size(); s &lt;= headerWidth; ++s)
+		printf(" ");
+}
+printf("\n");
+
+for (size_t cellIdx = 0; cellIdx &lt; columnWidths.size(); ++cellIdx)
+{
+	auto headerWidth = columnWidths[cellIdx];
+	for (size_t s = 0; s &lt; headerWidth; ++s)
+		printf("-");
+	printf(" ");
+}
+printf("\n");
+
+for (size_t rowIdx = 1; rowIdx &lt; matrix.size(); ++rowIdx)
+{
+	const auto& row = matrix[rowIdx];
+	for (size_t cellIdx = 0; cellIdx &lt; columnWidths.size(); ++cellIdx)
+	{
+		const auto& value = row[cellIdx];
+		auto headerWidth = columnWidths[cellIdx];
+		printf("%S", value.c_str());
+		for (size_t s = value.size(); s &lt;= headerWidth; ++s)
+			printf(" ");
+	}
+	printf("\n");
+}
+</pre>
+
+<h2>SQLite wrapper</h2>
+<p>
+	Central to 4db are wrapper classes around SQLite's C API.
+	The db class manages the database connection and provides routines for executing queries.
+	The dbreader class prepares and executes queries and provides access to query results.
+</p>
+<p>
+	Parameters are passed in using a paramap, which is a typedef of
+	std::unordered_map&lt;std::wstring, strnum&gt;.
+	strnum is a class that is either a wstring or a double.
+</p>
+<p>
+	It was fun learning about SQLite's C API.
+	The wrapper classes mostly stand on their own;
+	you can mold them to your purposes with little work.
 </p>
 
 <h2>Conclusion</h2>
 <p>
-    I hope you've enjoyed learning about 4db.
-    I invite all comments and questions.
-    If you are interested in integrating 4db into your project,
-    feel free to <a target="_blank" href="https://www.michaelballoni.com">reach out to me</a>
-    and pick my brain anywhere along the way.
-    Enjoy!
+    I hope you've enjoyed learning about 4db,
+	and seeing how fun processing your iTunes media library can be with 4db.
 </p>
-
 
 <!-------------------------------    That's it!   --------------------------->
 </body>

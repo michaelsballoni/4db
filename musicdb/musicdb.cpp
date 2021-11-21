@@ -226,8 +226,10 @@ int main(int argc, char* argv[])
             auto paramNames = fourdb::extractParamNames(line);
             if (!paramNames.empty())
             {
+                printf("\n");
                 printf("Enter values for the parameters in your query;"
                        " put # in front of numeric values:\n");
+                printf("\n");
                 for (const auto& paramName : paramNames)
                 {
                     printf("%S: ", paramName.c_str());

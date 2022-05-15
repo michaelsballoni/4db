@@ -130,18 +130,18 @@ std::vector<std::wstring> fourdb::extractParamNames(const std::wstring& sql)
 {
     std::vector<std::wstring> paramNames;
     std::wstring sb;
-    int lookFrom = 0;
+    size_t lookFrom = 0;
     while (true)
     {
         if (static_cast<unsigned>(lookFrom) >= sql.length())
             break;
 
-        int at = sql.find('@', lookFrom);
+        size_t at = sql.find('@', lookFrom);
         if (at == std::wstring::npos)
             break;
 
         sb.clear();
-        unsigned idx = static_cast<unsigned>(at + 1);
+        size_t idx = at + 1;
         while (idx < sql.length())
         {
             auto c = sql[idx++];

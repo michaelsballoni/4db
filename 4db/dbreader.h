@@ -1,6 +1,7 @@
 #pragma once
 
 #include "core.h"
+#include "strnum.h"
 
 namespace fourdb
 {
@@ -28,6 +29,8 @@ namespace fourdb
         int getInt32(unsigned idx);
         
         bool getBoolean(unsigned idx);
+
+        strnum getStrNum(unsigned idx, bool& isNull);
         
         bool isNull(unsigned idx);
 

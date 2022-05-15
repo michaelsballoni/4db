@@ -89,6 +89,31 @@ namespace fourdb
         return getInt32(idx) != 0;
     }
 
+    strnum dbreader::getStrNum(unsigned idx, bool& isNull)
+    {
+        isNull = false;
+
+        auto str = sqlite3_column_text(m_stmt, idx);
+        if (str != nullptr)
+            return toWideStr(str);
+
+        int columnType = sqlite3_column_type(m_stmt, idx);
+        switch (columnType)
+        {
+        case SQLITE_INTEGER:
+            return static_cast<double>(sqlite3_column_int64(m_stmt, idx));
+        case SQLITE_FLOAT:
+            return sqlite3_column_double(m_stmt, idx);
+        case SQLITE_NULL:
+            isNull = true;
+            return toWideStr("null");
+        case SQLITE_BLOB:
+            return toWideStr("blob");
+        default:
+            throw fourdberr("Unknown column type: " + std::to_string(columnType));
+        }
+    }
+
     bool dbreader::isNull(unsigned idx)
     {
         return sqlite3_column_type(m_stmt, idx) == SQLITE_NULL;

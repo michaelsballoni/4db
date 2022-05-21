@@ -415,24 +415,17 @@ namespace fourdb
 
                 if (_wcsicmp(where.op.c_str(), L"MATCHES") == 0)
                 {
-                    if (!nameObj.has_value())
-                    {
-                        wherePart += L"1 = 0"; // name doesn't exist, no match!
-                    }
-                    else
-                    {
-                        std::wstring matchTableLabel = cleanName == L"value" ? L"bvtValue" : L"bvt" + cleanName;
-                        std::wstring matchColumnLabel = cleanName == L"value" ? L"i.valueid" : L"iv" + cleanName + L".valueid";
+                    std::wstring matchTableLabel = cleanName == L"value" ? L"bvtValue" : L"bvt" + cleanName;
+                    std::wstring matchColumnLabel = cleanName == L"value" ? L"i.valueid" : L"iv" + cleanName + L".valueid";
 
-                        fromPart += L"\nJOIN bvaluetext " + matchTableLabel + L" ON " + matchColumnLabel + L" = " + matchTableLabel + L".valueid";
+                    fromPart += L"\nJOIN bvaluetext " + matchTableLabel + L" ON " + matchColumnLabel + L" = " + matchTableLabel + L".valueid";
 
-                        wherePart += matchTableLabel + L".stringSearchValue MATCH " + where.paramName;
+                    wherePart += matchTableLabel + L".stringSearchValue MATCH " + where.paramName;
 
-                        order orderBy;
-                        orderBy.field = L"rank";
-                        orderBy.descending = false;
-                        query.orderBy.push_back(orderBy);
-                    }
+                    order orderBy;
+                    orderBy.field = L"rank";
+                    orderBy.descending = false;
+                    query.orderBy.push_back(orderBy);
                 }
                 else if (cleanName == L"id")
                 {
